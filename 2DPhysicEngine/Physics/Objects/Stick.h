@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Graphics.h"
+#include "../../AngryApp/Graphics.h"
 
 /*---------------------------------------------------------------------------*/
 class Point;

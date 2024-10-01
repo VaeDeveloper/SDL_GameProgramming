@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Graphics.h"
+#include "../AngryApp/Graphics.h"
 #include "Vector2D.h"
 #include "./Objects/Stick.h"
 #include "Mouse.h"
