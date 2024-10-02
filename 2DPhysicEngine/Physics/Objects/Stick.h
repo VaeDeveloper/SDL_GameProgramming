@@ -26,7 +26,7 @@ private:
     bool bIsActive = true;
     bool bIsSelected = false;
 
-    Uint32 color = 0xFF000000;
+    Uint32 color = 0xFF00FF00;
     Uint32 colorWhenSelected = 0xFFFF0000;
 };
 /*---------------------------------------------------------------------------*/
