@@ -4,6 +4,9 @@
 #include "Vector2D.h"
 #include "../Physics/Objects/Body.h"
 
+/**
+ * Contact struct 
+ */
 struct Contact
 {
     Body* a;
