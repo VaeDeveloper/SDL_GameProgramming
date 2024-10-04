@@ -3,32 +3,51 @@
 #include "MatMN.h"
 
 
-/*------------------------------------------------------------------------------------------------------*/
-MatMN::MatMN() : M(0), N(0), rows(nullptr) {}
-/*------------------------------------------------------------------------------------------------------*/
-MatMN::MatMN(int M, int N) : M(M), N(N)
+MatMN::MatMN()
+: M(0), N(0), rows(nullptr)
+ {
+    // 
+ }
+
+/**
+ * 
+ */
+MatMN::MatMN(int M, int N)
+: M(M), N(N)
 {
     rows = new VectorN[M];
     for (int i = 0; i < M; i++)
         rows[i] = VectorN(N);
 }
-/*------------------------------------------------------------------------------------------------------*/
+
+/**
+ * 
+ */
 MatMN::MatMN(const MatMN& m)
 {
     *this = m;
 }
-/*------------------------------------------------------------------------------------------------------*/
+
+/**
+ * 
+ */
 MatMN::~MatMN()
 {
     delete[] rows;
 }
-/*------------------------------------------------------------------------------------------------------*/
+
+/**
+ * 
+ */
 void MatMN::Zero()
 {
     for (int i = 0; i < M; i++)
         rows[i].Zero();
 }
-/*------------------------------------------------------------------------------------------------------*/
+
+/**
+ * 
+ */
 MatMN MatMN::Transpose() const
 {
     MatMN result(N, M);
@@ -37,7 +56,10 @@ MatMN MatMN::Transpose() const
             result.rows[j][i] = rows[i][j];
     return result;
 }
-/*------------------------------------------------------------------------------------------------------*/
+
+/**
+ * 
+ */
 const MatMN& MatMN::operator=(const MatMN& m)
 {
     M = m.M;
@@ -47,7 +69,10 @@ const MatMN& MatMN::operator=(const MatMN& m)
         rows[i] = m.rows[i];
     return *this;
 }
-/*------------------------------------------------------------------------------------------------------*/
+
+/**
+ * 
+ */
 VectorN MatMN::operator*(const VectorN& v) const
 {
     if (v.N != N) return v;
@@ -56,7 +81,10 @@ VectorN MatMN::operator*(const VectorN& v) const
         result[i] = v.Dot(rows[i]);
     return result;
 }
-/*------------------------------------------------------------------------------------------------------*/
+
+/**
+ * 
+ */
 MatMN MatMN::operator*(const MatMN& m) const
 {
     if (m.M != N && m.N != M) return m;
@@ -68,7 +96,10 @@ MatMN MatMN::operator*(const MatMN& m) const
 
     return result;
 }
-/*------------------------------------------------------------------------------------------------------*/
+
+/**
+ * 
+ */
 VectorN MatMN::SolveGaussSeidel(const MatMN& A, const VectorN& b)
 {
     const int N = b.N;
@@ -88,4 +119,3 @@ VectorN MatMN::SolveGaussSeidel(const MatMN& A, const VectorN& b)
     }
     return X;
 }
-/*------------------------------------------------------------------------------------------------------*/
