@@ -5,7 +5,9 @@
 #include <vector>
 #include "../Physics/World.h"
 
-/**-------------------------------------------------------------------------------------------------------
+class Body;
+
+/**
 * @Discrioption: Application Class (
 * @func     IsRunning();
 * @func     Setup();
@@ -14,7 +16,6 @@
 * @func     Render();
 * @func     Destroy();
 */
-/*------------------------------------------------------------------------------------------------------*/
 class Application
 {
 private:
@@ -24,6 +25,7 @@ private:
     World* world = nullptr;
 
     SDL_Texture* bgTexture;
+    Body* bob = nullptr;
 
 public:
     Application() = default;

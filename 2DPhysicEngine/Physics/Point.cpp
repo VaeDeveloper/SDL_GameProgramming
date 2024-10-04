@@ -1,11 +1,11 @@
 #include "Point.h"
 
-/*---------------------------------------------------------------------------*/
+
 Point::Point(float x, float y)
 {
     pos = prevPos = initPos = Vector2D(x, y);
 }
-/*---------------------------------------------------------------------------*/
+
 void Point::KeepInsideView(int windowWidth, int windowHeight)
 {
     if (pos.x > windowWidth)
@@ -30,23 +30,23 @@ void Point::KeepInsideView(int windowWidth, int windowHeight)
         prevPos.y = pos.y;
     }
 }
-/*---------------------------------------------------------------------------*/
+
 void Point::AddStick(Stick* stick, int index)
 {
     sticks[index] = stick;
 }
-/*---------------------------------------------------------------------------*/
+
 void Point::SetPosition(float x, float y)
 {
     pos.x = x;
     pos.y = y;
 }
-/*---------------------------------------------------------------------------*/
+
 void Point::Pin()
 {
     isPinned = true;
 }
-/*---------------------------------------------------------------------------*/
+
 void Point::Update(float deltaTime, float drag, const Vector2D& acceleration, float elasticity, Mouse* mouse, int windowWidth, int windowHeight)
 {
     Vector2D cursorToPosDir = pos - mouse->GetPosition();
@@ -91,4 +91,4 @@ void Point::Update(float deltaTime, float drag, const Vector2D& acceleration, fl
 
     KeepInsideView(windowWidth, windowHeight);
 }
-/*---------------------------------------------------------------------------*/
+

@@ -5,8 +5,9 @@
 #include "./Objects/Stick.h"
 #include "Mouse.h"
 
-
-/*---------------------------------------------------------------------------*/
+/**
+ *
+ */
 class Point
 {
 private:
@@ -35,4 +36,4 @@ public:
 
     void Update(float deltaTime, float drag, const Vector2D& acceleration, float elasticity, Mouse* mouse, int windowWidth, int windowHeight);
 };
-/*---------------------------------------------------------------------------*/
+

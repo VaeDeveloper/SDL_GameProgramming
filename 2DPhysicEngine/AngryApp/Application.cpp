@@ -5,14 +5,12 @@
 #include "../Physics/Contact.h"
 #include "../Physics/Constraint.h"
 
-/*----------------------------------------------------------------------------------------------------------------------------------*/
 bool Application::IsRunning() const
 {
     return running;
 }
-/*----------------------------------------------------------------------------------------------------------------------------------*/
 /*Setup function (executed once in the beginning of the simulation)*/
-/*----------------------------------------------------------------------------------------------------------------------------------*/
+
 void Application::Setup()
 {
     running = Graphics::OpenWindow();
@@ -27,7 +25,7 @@ void Application::Setup()
     SDL_Surface* bgSurface = IMG_Load("./assets/angrybirds/background.png");
     if (bgSurface)
     {
-        bgTexture = SDL_CreateTextureFromSurface(Graphics::Renderer, bgSurface);
+        //bgTexture = SDL_CreateTextureFromSurface(Graphics::Renderer, bgSurface);
         SDL_FreeSurface(bgSurface);
     }
 
@@ -40,9 +38,12 @@ void Application::Setup()
     Body* floor = new Body(BoxShape(Graphics::Width() - 50, 50), Graphics::Width() / 2.0, Graphics::Height() / 2.0 + 340, 0.0);
     Body* leftFence = new Body(BoxShape(50, Graphics::Height() - 200), 0, Graphics::Height() / 2.0 - 35, 0.0);
     Body* rightFence = new Body(BoxShape(50, Graphics::Height() - 200), Graphics::Width(), Graphics::Height() / 2.0 - 35, 0.0);
+    Body* top = new Body(BoxShape(Graphics::Width() - 50, 50), Graphics::Width() / 2.0, Graphics::Height() / 2.0 + 720, 0.0);
+
     world->AddBody(floor);
     world->AddBody(leftFence);
     world->AddBody(rightFence);
+    world->AddBody(top);
 
     // Add a stack of boxes
     for (int i = 1; i <= 4; i++)
@@ -128,27 +129,27 @@ void Application::Setup()
 
 
     //// Add ragdoll parts (rigid bodies)
-    //Body* bob = new Body(CircleShape(5), Graphics::Width() / 2.0, Graphics::Height() / 2.0 - 200, 0.0);
-    //Body* head = new Body(CircleShape(25), bob->position.x, bob->position.y + 70, 5.0);
-    //Body* torso = new Body(BoxShape(50, 100), head->position.x, head->position.y + 80, 3.0);
-    //Body* leftArm = new Body(BoxShape(15, 70), torso->position.x - 32, torso->position.y - 10, 1.0);
-    //Body* rightArm = new Body(BoxShape(15, 70), torso->position.x + 32, torso->position.y - 10, 1.0);
-    //Body* leftLeg = new Body(BoxShape(20, 90), torso->position.x - 20, torso->position.y + 97, 1.0);
-    //Body* rightLeg = new Body(BoxShape(20, 90), torso->position.x + 20, torso->position.y + 97, 1.0);
-    //bob->SetTexture("./assets/ragdoll/bob.png");
-    //head->SetTexture("./assets/ragdoll/head.png");
-    //torso->SetTexture("./assets/ragdoll/torso.png");
-    //leftArm->SetTexture("./assets/ragdoll/leftArm.png");
-    //rightArm->SetTexture("./assets/ragdoll/rightArm.png");
-    //leftLeg->SetTexture("./assets/ragdoll/leftLeg.png");
-    //rightLeg->SetTexture("./assets/ragdoll/rightLeg.png");
-    //world->AddBody(bob);
-    //world->AddBody(head);
-    //world->AddBody(torso);
-    //world->AddBody(leftArm);
-    //world->AddBody(rightArm);
-    //world->AddBody(leftLeg);
-    //world->AddBody(rightLeg);
+    bob = new Body(CircleShape(5), Graphics::Width() / 2.0, Graphics::Height() / 2.0 - 200, 0.0);
+    Body* head = new Body(CircleShape(25), bob->position.x, bob->position.y + 70, 5.0);
+    Body* torso = new Body(BoxShape(50, 100), head->position.x, head->position.y + 80, 3.0);
+    Body* leftArm = new Body(BoxShape(15, 70), torso->position.x - 32, torso->position.y - 10, 1.0);
+    Body* rightArm = new Body(BoxShape(15, 70), torso->position.x + 32, torso->position.y - 10, 1.0);
+    Body* leftLeg = new Body(BoxShape(20, 90), torso->position.x - 20, torso->position.y + 97, 1.0);
+    Body* rightLeg = new Body(BoxShape(20, 90), torso->position.x + 20, torso->position.y + 97, 1.0);
+    bob->SetTexture("./assets/ragdoll/bob.png");
+    head->SetTexture("./assets/ragdoll/head.png");
+    torso->SetTexture("./assets/ragdoll/torso.png");
+    leftArm->SetTexture("./assets/ragdoll/leftArm.png");
+    rightArm->SetTexture("./assets/ragdoll/rightArm.png");
+    leftLeg->SetTexture("./assets/ragdoll/leftLeg.png");
+    rightLeg->SetTexture("./assets/ragdoll/rightLeg.png");
+    world->AddBody(bob);
+    world->AddBody(head);
+    world->AddBody(torso);
+    world->AddBody(leftArm);
+    world->AddBody(rightArm);
+    world->AddBody(leftLeg);
+    world->AddBody(rightLeg);
     //
     //// Add joints between ragdoll parts (distance constraints with one anchor point)
     //JointConstraint* string = new JointConstraint(bob, head, bob->position);
@@ -183,9 +184,8 @@ void Application::Setup()
     /*---------------------------------------------------------------------------------------------------------------*/
     // Load texture for the background image
 }
-/*----------------------------------------------------------------------------------------------------------------------------------*/
+
 /* Input processing.*/
-/*----------------------------------------------------------------------------------------------------------------------------------*/
 void Application::Input()
 {
     SDL_Event event;
@@ -224,13 +224,13 @@ void Application::Input()
                 break;
 
             case SDL_MOUSEMOTION:
-            //int x, y;
-            //SDL_GetMouseState(&x, &y);
-            //Vector2D mouse = Vector2D(x, y);
-            //Body* bob = world->GetBodies()[0];
-            //Vector2D direction = (mouse - bob->position).Normalize();
-            //float speed = 5.0;
-            //bob->position += direction * speed;
+            int x, y;
+            SDL_GetMouseState(&x, &y);
+            Vector2D mouse = Vector2D(x, y);
+            Vector2D direction = (mouse - bob->position).Normalize();
+            Body* bob = world->GetBodies()[0];
+            float speed = 5.0;
+            bob->position += direction * speed;
                 break;
         }
     }
