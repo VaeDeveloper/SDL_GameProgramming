@@ -5,7 +5,7 @@
 #include "../Physics/Contact.h"
 #include "../Physics/Constraint.h"
 
-#define DEBUG_IFNO (0)
+#define DEBUG_IFNO (1)
 
 
 /**
@@ -34,7 +34,7 @@ void Application::Setup()
     SDL_Surface* bgSurface = IMG_Load("./assets/angrybirds/background.png");
     if (bgSurface)
     {
-        //bgTexture = SDL_CreateTextureFromSurface(Graphics::Renderer, bgSurface);
+        bgTexture = SDL_CreateTextureFromSurface(Graphics::Renderer, bgSurface);
         SDL_FreeSurface(bgSurface);
     }
 
@@ -57,7 +57,7 @@ void Application::Setup()
     // Add a stack of boxes
     for (int i = 1; i <= 4; i++)
     {
-        float mass = 10.0 / (float)i;
+        const float mass = 10.0 / static_cast<float>(i);
         Body* box = new Body(BoxShape(50, 50), 600, floor->position.y - i * 55, mass);
         box->SetTexture("./assets/angrybirds/wood-box.png");
         box->friction = 0.9;
@@ -166,6 +166,7 @@ void Application::Setup()
     
     // Add joints between ragdoll parts (distance constraints with one anchor point)
     JointConstraint* rightHip = new JointConstraint(torso, rightLeg, torso->position + Vector2D(+20, +50));
+    
     //world->AddConstraint(bob);
     //world->AddConstraint(bob);
     //world->AddConstraint(leftShoulder);
@@ -297,7 +298,7 @@ void Application::Update()
 
     /* For Debug Information for collision detetection. */
     
-    #ifndef DEBUG_IFNO  
+    #if DEBUG_INFO
         world->SetDebug(debug);
     #endif
 }

@@ -117,11 +117,11 @@ float PolygonShape::GetMomentOfInertia() const
     {
         const auto a = localVertices[i];
         const auto b = localVertices[(i + PhysicEngine::POSITIVE) % localVertices.size()];
-        auto cross = abs(a.CrossProduct(b));
+        const auto cross = abs(a.CrossProduct(b));
         acc0 += cross * (a.DotProduct(a) + b.DotProduct(b) + a.DotProduct(b));
         acc1 += cross;
     }
-    
+
     return acc0 / 6 / acc1;
 }
 

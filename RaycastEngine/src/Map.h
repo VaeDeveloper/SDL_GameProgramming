@@ -9,9 +9,24 @@
 #define MAP_NUMBER_COLS 20
 
 
+/**
+ * 
+ */
 bool MapHasWallAt(float x, float y);
+
+/**
+ * 
+ */
 bool IsInsideMap(float x, float y);
+
+/**
+ * 
+ */
 int GetMap(int x, int y);
+
+/**
+ * 
+ */
 void RenderMapGrid(void);
 
 
