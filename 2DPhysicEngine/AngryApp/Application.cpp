@@ -5,12 +5,21 @@
 #include "../Physics/Contact.h"
 #include "../Physics/Constraint.h"
 
+#define DEBUG_IFNO (1)
+
+
+/**
+ * Running bool 
+ */
 bool Application::IsRunning() const
 {
     return running;
 }
-/*Setup function (executed once in the beginning of the simulation)*/
 
+
+/**
+ *Setup function (executed once in the beginning of the simulation) 
+ */
 void Application::Setup()
 {
     running = Graphics::OpenWindow();
@@ -18,7 +27,7 @@ void Application::Setup()
     // Create a physics world with gravity of -9.8 m/s2
     world = new World(-9.8);
     
-        // Create a physics world with gravity of -9.8 m/s2
+    // Create a physics world with gravity of -9.8 m/s2
     world = new World(-9.8);
 
     // Load texture for the background image
@@ -97,18 +106,23 @@ void Application::Setup()
     startStep->SetTexture("./assets/angrybirds/rock-bridge-anchor.png");
     world->AddBody(startStep);
     Body* last = floor;
+
     for (int i = 1; i <= numSteps; i++)
     {
         float x = startStep->position.x + 30 + (i * spacing);
         float y = startStep->position.y + 20;
         float mass = (i == numSteps) ? 0.0 : 3.0;
+        
         Body* step = new Body(CircleShape(15), x, y, mass);
         step->SetTexture("./assets/angrybirds/wood-bridge-step.png");
         world->AddBody(step);
+        
         JointConstraint* joint = new JointConstraint(last, step, step->position);
         world->AddConstraint(joint);
+        
         last = step;
     }
+
     Body* endStep = new Body(BoxShape(80, 20), last->position.x + 60, last->position.y - 20, 0.0);
     endStep->SetTexture("./assets/angrybirds/rock-bridge-anchor.png");
     world->AddBody(endStep);
@@ -126,7 +140,6 @@ void Application::Setup()
     world->AddBody(pig2);
     world->AddBody(pig3);
     world->AddBody(pig4);
-
 
     //// Add ragdoll parts (rigid bodies)
     bob = new Body(CircleShape(5), Graphics::Width() / 2.0, Graphics::Height() / 2.0 - 200, 0.0);
@@ -150,22 +163,17 @@ void Application::Setup()
     world->AddBody(rightArm);
     world->AddBody(leftLeg);
     world->AddBody(rightLeg);
-    //
-    //// Add joints between ragdoll parts (distance constraints with one anchor point)
-    //JointConstraint* string = new JointConstraint(bob, head, bob->position);
-    //JointConstraint* neck = new JointConstraint(head, torso, head->position + Vector2D(0, 25));
-    //JointConstraint* leftShoulder = new JointConstraint(torso, leftArm, torso->position + Vector2D(-28, -45));
-    //JointConstraint* rightShoulder = new JointConstraint(torso, rightArm, torso->position + Vector2D(+28, -45));
-    //JointConstraint* leftHip = new JointConstraint(torso, leftLeg, torso->position + Vector2D(-20, +50));
-    //JointConstraint* rightHip = new JointConstraint(torso, rightLeg, torso->position + Vector2D(+20, +50));
-    //world->AddConstraint(string);
-    //world->AddConstraint(neck);
+    
+    // Add joints between ragdoll parts (distance constraints with one anchor point)
+    JointConstraint* rightHip = new JointConstraint(torso, rightLeg, torso->position + Vector2D(+20, +50));
+    //world->AddConstraint(bob);
+    //world->AddConstraint(bob);
     //world->AddConstraint(leftShoulder);
     //world->AddConstraint(rightShoulder);
     //world->AddConstraint(leftHip);
-    //world->AddConstraint(rightHip);
+    world->AddConstraint(rightHip);
     //
-    //// Add a floor and walls to contain objects objects
+    // Add a floor and walls to contain objects objects
     //Body* floor = new Body(BoxShape(Graphics::Width() - 50, 50), Graphics::Width() / 2.0, Graphics::Height() - 50, 0.0);
     //Body* leftWall = new Body(BoxShape(50, Graphics::Height() - 100), 50, Graphics::Height() / 2.0 - 25, 0.0);
     //Body* rightWall = new Body(BoxShape(50, Graphics::Height() - 100), Graphics::Width() - 50, Graphics::Height() / 2.0 - 25, 0.0);
@@ -178,22 +186,28 @@ void Application::Setup()
 
     
     // Add a big static circle in the middle of the screen
-    //Body* bigBall = new Body(CircleShape(64), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 0.0);
-    //bigBall->SetTexture("./assets/bowlingball.png");
-    //world->AddBody(bigBall);
+    Body* bigBall = new Body(CircleShape(64), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 0.0);
+    bigBall->SetTexture("./assets/bowlingball.png");
+    world->AddBody(bigBall);
     /*---------------------------------------------------------------------------------------------------------------*/
     // Load texture for the background image
 }
 
-/* Input processing.*/
+/** 
+ *  Input processing.\
+ */
 void Application::Input()
 {
     SDL_Event event;
+
     while (SDL_PollEvent(&event))
     {
         switch (event.type)
         {
-            case SDL_QUIT: running = false; break;
+            case SDL_QUIT: 
+                running = false;
+                 break;
+
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_ESCAPE) running = false;
                 if (event.key.keysym.sym == SDLK_d) debug = !debug;
@@ -201,6 +215,7 @@ void Application::Input()
                 if (event.key.keysym.sym == SDLK_LEFT) world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(-400.0, 0.0));
                 if (event.key.keysym.sym == SDLK_RIGHT) world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(+400.0, 0.0));
                 break;
+
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
@@ -212,6 +227,7 @@ void Application::Input()
                     box->friction = 0.9;
                     world->AddBody(box);
                 }
+
                 if (event.button.button == SDL_BUTTON_RIGHT)
                 {
                     int x, y;
@@ -221,23 +237,24 @@ void Application::Input()
                     rock->friction = 0.4;
                     world->AddBody(rock);
                 }
+
                 break;
 
             case SDL_MOUSEMOTION:
-            int x, y;
-            SDL_GetMouseState(&x, &y);
-            Vector2D mouse = Vector2D(x, y);
-            Vector2D direction = (mouse - bob->position).Normalize();
-            Body* bob = world->GetBodies()[0];
-            float speed = 5.0;
-            bob->position += direction * speed;
+                int x, y;
+                SDL_GetMouseState(&x, &y);
+                Vector2D mouse = Vector2D(x, y);
+                Vector2D direction = (mouse - bob->position).Normalize();
+                Body* bob = world->GetBodies()[0];
+                float speed = 5.0;
+                bob->position += direction * speed;
                 break;
         }
     }
 }
-/*----------------------------------------------------------------------------------------------------------------------------------*/
-/* Update function (called several times per second to update objects) */
-/*----------------------------------------------------------------------------------------------------------------------------------*/
+/** 
+ *  Update function (called several times per second to update objects) 
+ */
 float Application::TimeDeductions()
 {
     // Wait some time until the reach the target frame time in milliseconds
@@ -254,7 +271,10 @@ float Application::TimeDeductions()
 
     return deltaTime;
 }
-/*----------------------------------------------------------------------------------------------------------------------------------*/
+
+/**
+ * Update time application 
+ */
 void Application::Update()
 {
     Graphics::ClearScreen(0xFF0F0721);
@@ -266,11 +286,13 @@ void Application::Update()
     world->Update(deltaTime);
 
     /* For Debug Information for collision detetection. */
-    //world->SetDebug(debug);
+    
+    #ifndef DEBUG_IFNO  
+        world->SetDebug(debug);
+    #endif
 }
-/*----------------------------------------------------------------------------------------------------------------------------------*/
+
 /* Render function (called several times per second to draw objects) */
-/*----------------------------------------------------------------------------------------------------------------------------------*/
 void Application::Render()
 {
     Graphics::DrawTexture(Graphics::Width() / 2.0, Graphics::Height() / 2.0, Graphics::Width(), Graphics::Height(), 0.0f, bgTexture);
@@ -320,17 +342,12 @@ void Application::Render()
 
     Graphics::RenderFrame();
 }
-/*----------------------------------------------------------------------------------------------------------------------------------*/
 void Application::RenderObjects()
 {
     //
 }
-/*----------------------------------------------------------------------------------------------------------------------------------*/
-/* Destroy function to delete objects and close the window*/
-/*----------------------------------------------------------------------------------------------------------------------------------*/
 void Application::Destroy()
 {
     delete world;
     Graphics::CloseWindow();
 }
-/*----------------------------------------------------------------------------------------------------------------------------------*/
