@@ -14,6 +14,7 @@ const int POSITIVE = 1;
 const float ZERO_FLOAT = 0.0f;
 const float NEGATIVE_FLOAT = -1.0f;
 const float POSITIVE_FLOAT = 1.0f;
+const float DotPerTimeSeconds = 1000.0f;
 }  // namespace PhysicEngine
 
 #endif  // ! CONSTANTS_H
