@@ -5,7 +5,7 @@
 #include "Utilities/MacroFunction.h"
 #include "upng.h"         
 
-upng_t* _Textures[NUM_TEXTURES];
+extern upng_t* _Textures[NUM_TEXTURES];
 
 void LoadTextures(void);
 void FreeTextures(void);

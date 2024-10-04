@@ -8,12 +8,12 @@
 
 typedef struct
 {
-    bool visible;
     float x;
     float y;
-    float distance;
-    float angle;
     int texture;
+    float angle;
+    float distance;
+    bool visible;
 }sprite_t;
 
 void RenderSpriteProjection(void);

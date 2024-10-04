@@ -143,7 +143,7 @@ void Update()
 void Render()
 {
     ClearColorBuffer(BLACK_COLOR);
-    RenderWallProjection();
+    //RenderWallProjection();
     RenderSpriteProjection();
 
 
