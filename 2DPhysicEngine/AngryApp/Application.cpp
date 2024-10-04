@@ -5,7 +5,7 @@
 #include "../Physics/Contact.h"
 #include "../Physics/Constraint.h"
 
-#define DEBUG_IFNO (1)
+#define DEBUG_IFNO (0)
 
 
 /**
@@ -83,14 +83,14 @@ void Application::Setup()
     world->AddBody(triangle);
 
     // Add a pyramid of boxes
-    int numRows = 5;
+    constexpr int numRows = 5;
     for (int col = 0; col < numRows; col++)
     {
         for (int row = 0; row < col; row++)
         {
-            float x = (plank3->position.x + 200.0f) + col * 50.0f - (row * 25.0f);
-            float y = (floor->position.y - 50.0f) - row * 52.0f;
-            float mass = (5.0f / (row + 1.0f));
+            const float x = (plank3->position.x + 200.0f) + col * 50.0f - (row * 25.0f);
+            const float y = (floor->position.y - 50.0f) - row * 52.0f;
+            const float mass = (5.0f / (row + 1.0f));
             Body* box = new Body(BoxShape(50, 50), x, y, mass);
             box->friction = 0.9;
             box->restitution = 0.0;
@@ -100,8 +100,8 @@ void Application::Setup()
     }
 
     // Add a bridge of connected steps and joints
-    int numSteps = 10;
-    int spacing = 33;
+    const int numSteps = 10;
+    const int spacing = 33;
     Body* startStep = new Body(BoxShape(80, 20), 200, 200, 0.0);
     startStep->SetTexture("./assets/angrybirds/rock-bridge-anchor.png");
     world->AddBody(startStep);
@@ -109,9 +109,9 @@ void Application::Setup()
 
     for (int i = 1; i <= numSteps; i++)
     {
-        float x = startStep->position.x + 30 + (i * spacing);
-        float y = startStep->position.y + 20;
-        float mass = (i == numSteps) ? 0.0 : 3.0;
+        const float x = startStep->position.x + 30 + (i * spacing);
+        const float y = startStep->position.y + 20;
+        const float mass = (i == numSteps) ? 0.0 : 3.0;
         
         Body* step = new Body(CircleShape(15), x, y, mass);
         step->SetTexture("./assets/angrybirds/wood-bridge-step.png");
@@ -206,7 +206,7 @@ void Application::Input()
         {
             case SDL_QUIT: 
                 running = false;
-                 break;
+                break;
 
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_ESCAPE) running = false;
@@ -260,12 +260,21 @@ float Application::TimeDeductions()
 {
     // Wait some time until the reach the target frame time in milliseconds
     static int timePreviousFrame;
-    int timeToWait = PhysicEngine::MILLISECS_PER_FRAME - (SDL_GetTicks() - timePreviousFrame);
-    if (timeToWait > 0) SDL_Delay(timeToWait);
+    const int timeToWait = PhysicEngine::MILLISECS_PER_FRAME - (SDL_GetTicks() - timePreviousFrame);
+    
+    if (timeToWait > 0)
+    {
+        SDL_Delay(timeToWait);
+    } 
+        
 
     // Calculate the deltatime in seconds
     float deltaTime = (SDL_GetTicks() - timePreviousFrame) / 1000.0f;
-    if (deltaTime > 0.016) deltaTime = 0.016;
+    
+    if (deltaTime > 0.016) 
+    {
+        deltaTime = 0.016;
+    }
 
     // Set the time of the current frame to be used in the next one
     timePreviousFrame = SDL_GetTicks();
@@ -301,20 +310,23 @@ void Application::Render()
     Graphics::DrawTexture(Graphics::Width() / 2.0, Graphics::Height() / 2.0, Graphics::Width(), Graphics::Height(), 0.0f, bgTexture);
 
     // Draw all bodies
-    for (auto& body : world->GetBodies())
+    for (const auto& body : world->GetBodies())
     {
         if (body->shape->GetType() == CIRCLE)
         {
             CircleShape* circleShape = (CircleShape*)body->shape;
+            
             if (!debug && body->texture)
             {
-                Graphics::DrawTexture(
-                    body->position.x, body->position.y, circleShape->radius * 2, circleShape->radius * 2, body->rotation, body->texture);
+                Graphics::DrawTexture(body->position.x, body->position.y, circleShape->radius * 2, circleShape->radius * 2, body->rotation, body->texture);
             }
+
+#ifdef DEBUG_INFO
             else if (debug)
             {
-                Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation, 0xFF0000FF);
+                    Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation, 0xFF0000FF);
             }
+#endif 
         }
 
         if (body->shape->GetType() == BOX)
@@ -324,12 +336,14 @@ void Application::Render()
             {
                 Graphics::DrawTexture(body->position.x, body->position.y, boxShape->width, boxShape->height, body->rotation, body->texture);
             }
+
+#ifdef DEBUG_INFO
             else if (debug)
             {
                 Graphics::DrawPolygon(body->position.x, body->position.y, boxShape->worldVertices, 0xFF0000FF);
             }
+#endif
         }
-
         if (body->shape->GetType() == POLYGON)
         {
             PolygonShape* polygonShape = (PolygonShape*)body->shape;
@@ -338,10 +352,13 @@ void Application::Render()
                 Graphics::DrawTexture(
                     body->position.x, body->position.y, polygonShape->width, polygonShape->height, body->rotation, body->texture);
             }
+
+#ifdef DEBUG_INFO
             else if (debug)
             {
                 Graphics::DrawPolygon(body->position.x, body->position.y, polygonShape->worldVertices, 0xFF0000FF);
             }
+#endif
         }
     }
 
