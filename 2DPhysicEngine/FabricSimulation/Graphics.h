@@ -6,11 +6,9 @@
 #include "../Physics/Vector2D.h"
 #include <vector>
 
-/**-------------------------------------------------------------------------------------------------------
- * @Discrioption: Graphics Struct
- *
+/**
+ *  Graphics Struct
  */
-/*------------------------------------------------------------------------------------------------------*/
 struct Graphics
 {
     static int windowWidth;
@@ -34,5 +32,4 @@ struct Graphics
     static void DrawFillPolygon(int x, int y, const std::vector<Vector2D>& vertices, Uint32 color);
     static void DrawTexture(int x, int y, int width, int height, float rotation, SDL_Texture* texture);
 };
-/*------------------------------------------------------------------------------------------------------*/
 #endif

@@ -4,7 +4,6 @@
 #include "Vector2D.h"
 #include "../Physics/Objects/Body.h"
 
-/*------------------------------------------------------------------------------------------------------*/
 struct Contact
 {
     Body* a;
@@ -22,6 +21,5 @@ struct Contact
     void ResolvePenetration();
     void ResolveCollision();
 };
-/*------------------------------------------------------------------------------------------------------*/
 
 #endif

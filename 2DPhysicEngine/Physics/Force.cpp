@@ -4,7 +4,9 @@
 #include <iostream>
 #include "Math.h"
 
-/*------------------------------------------------------------------------------------------------------*/
+/**
+ * 
+ */
 Vector2D Force::GenerateDragForce(const Body& Body, float k)
 {
     Vector2D dragForce = Vector2D::Zero;
@@ -23,13 +25,16 @@ Vector2D Force::GenerateDragForce(const Body& Body, float k)
 
     return dragForce;
 }
-/*------------------------------------------------------------------------------------------------------*/
+
+/**
+ * 
+ */
 Vector2D Force::GenerateFrictionForce(const Body& Body, float k)
 {
     Vector2D frictionForce = Vector2D::Zero;
 
     /* Calculate the friction direction (inverse of velocity unit vector) */
-    Vector2D frictionDirection = Body.velocity.UnitVector() * PhysicEngine::NEGATIVE_FLOAT;
+    const Vector2D frictionDirection = Body.velocity.UnitVector() * PhysicEngine::NEGATIVE_FLOAT;
 
     /* Calculate the friction Magnitude */
     float frictionMagnitude = k;
@@ -39,11 +44,14 @@ Vector2D Force::GenerateFrictionForce(const Body& Body, float k)
 
     return frictionForce;
 }
-/*------------------------------------------------------------------------------------------------------*/
+
+/**
+ * 
+ */
 Vector2D Force::GenerateGravitationalForce(const Body& a, const Body& b, float G, float minDistance, float maxDistance)
 {
     /* Calculate the distance between the two objects.*/
-    Vector2D d = (b.position - a.position);
+    const Vector2D d = (b.position - a.position);
 
     float distanceSquared = d.MagnitudeSquared();
 
@@ -55,46 +63,51 @@ Vector2D Force::GenerateGravitationalForce(const Body& a, const Body& b, float G
     Vector2D attractionDirection = d.UnitVector();
 
     /*Calculate the strength of the attraction force */
-    float attractionMagnitude = G * (a.mass * b.mass) / distanceSquared;
+    const float attractionMagnitude = G * (a.mass * b.mass) / distanceSquared;
 
     /* Calculate the final resulting attraction force vector*/
-    Vector2D attractionForce = attractionDirection * attractionMagnitude;
+    const Vector2D attractionForce = attractionDirection * attractionMagnitude;
     return attractionForce; 
 }
-/*------------------------------------------------------------------------------------------------------*/
-Vector2D Force::GenerateSpringForce(const Body& Body, Vector2D anchor, float restLength, float k)
+
+/**
+ * 
+ */
+Vector2D Force::GenerateSpringForce(const Body& Body, Vector2D anchor, float restLength, float k) 
 {
     /* Calculate the distance between the anchor and the object*/   
-    Vector2D d = Body.position - anchor;
+    const Vector2D d = Body.position - anchor;
 
     /* Find the spring displacement considering the rest length*/
-    float displacement = d.Magnitude() - restLength;
+    const float displacement = d.Magnitude() - restLength;
 
     /* Calculate the direction and the magnitude of the spring force */
-    Vector2D springDirection = d.UnitVector();
-    float springMagnitude = -k * displacement;
+    const Vector2D springDirection = d.UnitVector();
+    const float springMagnitude = -k * displacement;
 
     /* Calculate the final resulting spring force vector*/
-    Vector2D springForce = springDirection * springMagnitude;
+    const Vector2D springForce = springDirection * springMagnitude;
     return springForce;
 }
-/*------------------------------------------------------------------------------------------------------*/
+
+/**
+ * 
+ */
 Vector2D Force::GenerateSpringForce(const Body& a, const Body& b, float restLength, float k)
 {
     /* Calculate the distance between the two Body */
-    Vector2D d = a.position - b.position;
+    const Vector2D d = a.position - b.position;
 
     /* Find the spring displacement considering the rest length */
-    float displacement = d.Magnitude() - restLength;
+    const float displacement = d.Magnitude() - restLength;
 
     /* Calculate the direction of the spring force */
-    Vector2D springDirection = d.UnitVector();
+    const Vector2D springDirection = d.UnitVector();
 
     /* Calculate the magnitude of the spring force */   
-    float springMagnutude = -k * displacement;
+    const float springMagnutude = -k * displacement;
 
     /* Calculate the final resulting spring force vector*/
-    Vector2D springForce = springDirection * springMagnutude;
+    const Vector2D springForce = springDirection * springMagnutude;
     return springForce;
 }
-/*------------------------------------------------------------------------------------------------------*/

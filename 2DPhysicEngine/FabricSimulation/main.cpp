@@ -2,17 +2,6 @@
 
 #include "ClothApplication.h"
 
-
-void LoopingApp(Application& app)
-{
-    while (app.IsRunning())
-    {
-        app.Input();
-        app.Update();
-        app.Render();
-    }
-}
-
 int main(int argc, char* args[])
 {
     Application app;
@@ -20,7 +9,13 @@ int main(int argc, char* args[])
     app.Setup(1000, 350, 10);
 
     app.Setup();
-    LoopingApp(app);
+    while (app.IsRunning())
+    {
+        app.Input();
+        app.Update();
+        app.Render();
+    }
+
     app.Destroy();
 
     return 0;

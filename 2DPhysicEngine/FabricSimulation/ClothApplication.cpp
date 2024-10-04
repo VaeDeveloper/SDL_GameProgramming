@@ -4,20 +4,16 @@
 #include "../Physics/Constants.h"
 #include "iostream"
 
-/*------------------------------------------------------------------------------------------------------*/
 
 bool Application::IsRunning()
 {
     return running;
 }
-/*------------------------------------------------------------------------------------------------------*/
 /* Setup function(executed once in the beginning of the simulation)*/
-/*------------------------------------------------------------------------------------------------------*/
 void Application::Setup()
 {
     std::cout << "Application Initialization \n";
 }
-/*------------------------------------------------------------------------------------------------------*/
 void Application::Setup(int clothWidth, int clothHeight, int clothSpacing)
 {
     graphic = new Graphics();
@@ -35,9 +31,7 @@ void Application::Setup(int clothWidth, int clothHeight, int clothSpacing)
     lastUpdateTime = SDL_GetTicks();
 }
 
-/*------------------------------------------------------------------------------------------------------*/
 /* Input processing */
-/*------------------------------------------------------------------------------------------------------*/
 void Application::Input()
 {
     SDL_Event event;
@@ -112,9 +106,7 @@ void Application::Input()
         }
     }
 }
-/*------------------------------------------------------------------------------------------------------*/
 /*  Update function(called several times per second to update objects) */
-/*------------------------------------------------------------------------------------------------------*/
 void Application::Update()
 {
     Uint32 currentTime = SDL_GetTicks();
@@ -124,9 +116,7 @@ void Application::Update()
 
     lastUpdateTime = currentTime;
 }
-/*------------------------------------------------------------------------------------------------------*/
 /*  Render function (called several times per second to draw objects) */
-/*------------------------------------------------------------------------------------------------------*/
 void Application::Render()
 {
     Graphics::ClearScreen(0xFF00000000);
@@ -135,9 +125,7 @@ void Application::Render()
 
     Graphics::RenderFrame();
 }
-/*------------------------------------------------------------------------------------------------------*/
 /* Destroy function to delete objects and close the window*/
-/*------------------------------------------------------------------------------------------------------*/
 void Application::Destroy()
 {
     delete mouse;
@@ -146,4 +134,3 @@ void Application::Destroy()
 
     Graphics::CloseWindow();
 }
-/*------------------------------------------------------------------------------------------------------*/

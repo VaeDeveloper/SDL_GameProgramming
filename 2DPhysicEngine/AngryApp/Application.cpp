@@ -172,7 +172,8 @@ void Application::Setup()
     //world->AddConstraint(rightShoulder);
     //world->AddConstraint(leftHip);
     world->AddConstraint(rightHip);
-    //
+    
+
     // Add a floor and walls to contain objects objects
     //Body* floor = new Body(BoxShape(Graphics::Width() - 50, 50), Graphics::Width() / 2.0, Graphics::Height() - 50, 0.0);
     //Body* leftWall = new Body(BoxShape(50, Graphics::Height() - 100), 50, Graphics::Height() / 2.0 - 25, 0.0);
@@ -189,7 +190,6 @@ void Application::Setup()
     Body* bigBall = new Body(CircleShape(64), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 0.0);
     bigBall->SetTexture("./assets/bowlingball.png");
     world->AddBody(bigBall);
-    /*---------------------------------------------------------------------------------------------------------------*/
     // Load texture for the background image
 }
 
@@ -252,6 +252,7 @@ void Application::Input()
         }
     }
 }
+
 /** 
  *  Update function (called several times per second to update objects) 
  */
@@ -292,7 +293,9 @@ void Application::Update()
     #endif
 }
 
-/* Render function (called several times per second to draw objects) */
+/** 
+ *  Render function (called several times per second to draw objects)
+ */
 void Application::Render()
 {
     Graphics::DrawTexture(Graphics::Width() / 2.0, Graphics::Height() / 2.0, Graphics::Width(), Graphics::Height(), 0.0f, bgTexture);
@@ -313,6 +316,7 @@ void Application::Render()
                 Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation, 0xFF0000FF);
             }
         }
+
         if (body->shape->GetType() == BOX)
         {
             BoxShape* boxShape = (BoxShape*)body->shape;
@@ -325,6 +329,7 @@ void Application::Render()
                 Graphics::DrawPolygon(body->position.x, body->position.y, boxShape->worldVertices, 0xFF0000FF);
             }
         }
+
         if (body->shape->GetType() == POLYGON)
         {
             PolygonShape* polygonShape = (PolygonShape*)body->shape;
@@ -342,10 +347,18 @@ void Application::Render()
 
     Graphics::RenderFrame();
 }
+
+/**
+ * Render Object implementation 
+ */
 void Application::RenderObjects()
 {
     //
 }
+
+/**
+ * Destroy objects implementation
+ */
 void Application::Destroy()
 {
     delete world;

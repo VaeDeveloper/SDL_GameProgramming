@@ -4,9 +4,9 @@
 #include "../Physics/Objects/Body.h"
 #include "MatMN.h"
 
-
-
-/*------------------------------------------------------------------------------------------------------*/
+/**
+ * 
+ */
 class Constraint
 {
 public:
@@ -26,6 +26,9 @@ public:
     virtual void PostSolve() {}
 };
 
+/**
+ * 
+ */
 class JointConstraint : public Constraint
 {
 private:
@@ -57,6 +60,5 @@ public:
     void Solve() override;
     void PostSolve() override;
 };
-/*------------------------------------------------------------------------------------------------------*/
 
 #endif

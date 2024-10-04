@@ -6,17 +6,26 @@ SDL_Renderer* Graphics::Renderer = NULL;
 int Graphics::windowWidth = 10;
 int Graphics::windowHeight = 10;
 
-/*------------------------------------------------------------------------------------------------------*/
+
+/**
+ * Width getter 
+ */
 int Graphics::Width()
 {
     return windowWidth;
 }
-/*------------------------------------------------------------------------------------------------------*/
+
+/**
+ * Height getter
+ */
 int Graphics::Height()
 {
     return windowHeight;
 }
-/*------------------------------------------------------------------------------------------------------*/
+
+/**
+ * Open Window 
+ */
 bool Graphics::OpenWindow()
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -47,40 +56,40 @@ bool Graphics::OpenWindow()
 
     return true;
 }
-/*------------------------------------------------------------------------------------------------------*/
+
 void Graphics::ClearScreen(Uint32 color)
 {
     SDL_SetRenderDrawColor(Renderer, color >> 16, color >> 8, color, 255);
     SDL_RenderClear(Renderer);
 }
-/*------------------------------------------------------------------------------------------------------*/
+
 void Graphics::RenderFrame()
 {
     SDL_RenderPresent(Renderer);
 }
-/*------------------------------------------------------------------------------------------------------*/
+
 void Graphics::DrawLine(int x0, int y0, int x1, int y1, Uint32 color)
 {
     lineColor(Renderer, x0, y0, x1, y1, color);
 }
-/*------------------------------------------------------------------------------------------------------*/
+
 void Graphics::DrawPoint(int x, int y, Uint32 color)
 {
     SDL_SetRenderDrawColor(Renderer, color >> 16, color >> 8, color, 255);
     SDL_RenderDrawPoint(Renderer, x, y);
 }
-/*------------------------------------------------------------------------------------------------------*/
+
 void Graphics::DrawCircle(int x, int y, int radius, float angle, Uint32 color)
 {
     circleColor(Renderer, x, y, radius, color);
     lineColor(Renderer, x, y, x + cos(angle) * radius, y + sin(angle) * radius, color);
 }
-/*------------------------------------------------------------------------------------------------------*/
+
 void Graphics::DrawFillCircle(int x, int y, int radius, Uint32 color)
 {
     filledCircleColor(Renderer, x, y, radius, color);
 }
-/*------------------------------------------------------------------------------------------------------*/
+
 void Graphics::DrawRect(int x, int y, int width, int height, Uint32 color)
 {
     lineColor(Renderer, x - width / 2.0, y - height / 2.0, x + width / 2.0, y - height / 2.0, color);
@@ -88,12 +97,12 @@ void Graphics::DrawRect(int x, int y, int width, int height, Uint32 color)
     lineColor(Renderer, x + width / 2.0, y + height / 2.0, x - width / 2.0, y + height / 2.0, color);
     lineColor(Renderer, x - width / 2.0, y + height / 2.0, x - width / 2.0, y - height / 2.0, color);
 }
-/*------------------------------------------------------------------------------------------------------*/
+
 void Graphics::DrawFillRect(int x, int y, int width, int height, Uint32 color)
 {
     boxColor(Renderer, x - width / 2.0, y - height / 2.0, x + width / 2.0, y + height / 2.0, color);
 }
-/*------------------------------------------------------------------------------------------------------*/
+
 void Graphics::DrawPolygon(int x, int y, const std::vector<Vector2D>& vertices, Uint32 color)
 {
     for (int i = 0; i < vertices.size(); i++)
@@ -105,7 +114,6 @@ void Graphics::DrawPolygon(int x, int y, const std::vector<Vector2D>& vertices, 
     filledCircleColor(Renderer, x, y, 1, color);
 }
 
-/*------------------------------------------------------------------------------------------------------*/
 void Graphics::DrawFillPolygon(int x, int y, const std::vector<Vector2D>& vertices, Uint32 color)
 {
     std::vector<short> vx;
@@ -124,7 +132,7 @@ void Graphics::DrawFillPolygon(int x, int y, const std::vector<Vector2D>& vertic
     filledPolygonColor(Renderer, &vx[0], &vy[0], vertices.size(), color);
     filledCircleColor(Renderer, x, y, 1, 0xFF000000);
 }
-/*------------------------------------------------------------------------------------------------------*/
+
 void Graphics::DrawTexture(int x, int y, int width, int height, float rotation, SDL_Texture* texture)
 {
     SDL_Rect dstRect = {x - (width / 2), y - (height / 2), width, height};
@@ -132,11 +140,10 @@ void Graphics::DrawTexture(int x, int y, int width, int height, float rotation, 
 
     SDL_RenderCopyEx(Renderer, texture, NULL, &dstRect, rotationDeg, NULL, SDL_FLIP_NONE);
 }
-/*------------------------------------------------------------------------------------------------------*/
+
 void Graphics::CloseWindow(void)
 {
     SDL_DestroyRenderer(Renderer);
     SDL_DestroyWindow(Window);
     SDL_Quit();
 }
-/*------------------------------------------------------------------------------------------------------*/
