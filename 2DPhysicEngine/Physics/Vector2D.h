@@ -3,12 +3,11 @@
 
 #include <iostream>
 
-/**-------------------------------------------------------------------------------------------------------
+/**
  * @Discrioption: Vector2D Class (class 2D vector and functions)
  * @functions   Add(), Sub(), Scale(), Rotate(return Vector2D), Magnitude(return float), MagnitudeSquared(return float)
  * Normalize(return Vector2D&), Unitvector(return Vector2D), Normal(return Vector2D), DotProduct(return float), CrossProduct(return float)
  */
-/*------------------------------------------------------------------------------------------------------*/
 struct Vector2D
 {
 
@@ -33,13 +32,13 @@ public:
 
     Vector2D& Normalize();                          // v1.Normalize()
     Vector2D UnitVector() const;                    // v1.UnitVector()
-    Vector2D Normal() const;                        // n = v1.Normal()
+    Vector2D Normal() const;                        // n = v1.Normalize ()
 
     float DotProduct(const Vector2D& v) const;      // v1.Dot(v2)
     float CrossProduct(const Vector2D& v) const;    // v1.Cross(v2)
     float Length() const;
     float LengthSq() const;
-    static inline Vector2D ZeroVector();                   // ZeroVector return (Vector2D(0.0, 0.0)
+    static inline Vector2D ZeroVector();            // ZeroVector return (Vector2D(0.0, 0.0)
 
 #pragma region Operator_
     /* Override operators function */
