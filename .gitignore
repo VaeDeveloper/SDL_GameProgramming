@@ -32,4 +32,6 @@
 *.app
 
 
+
+.vscode
 2DPhysicEngine/app
