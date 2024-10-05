@@ -4,17 +4,11 @@
 #include <iostream>
 
 /**
- * @Discrioption: Vector2D Class (class 2D vector and functions)
- * @functions   Add(), Sub(), Scale(), Rotate(return Vector2D), Magnitude(return float), MagnitudeSquared(return float)
- * Normalize(return Vector2D&), Unitvector(return Vector2D), Normal(return Vector2D), DotProduct(return float), CrossProduct(return float)
+ * Vector2D 
  */
-
 struct Vector2D
 {
-
 public:
-
-
     /* data */
     float x;
     float y;
@@ -24,9 +18,14 @@ public:
 
     ~Vector2D() = default;
 
+    const float GetX() const { return x; }          // get x coord 
+    const float GetY() const { return y; }          // get y coord
+
+
     void Add(const Vector2D& v);                    // v1.Add(v2)
     void Sub(const Vector2D& v);                    // v1.Sub(v2)
     void Scale(const float n);                      // v1.Scale(n)
+    
     Vector2D Rotate(const float angle) const;       // v1.Rotate(angle)
 
     float Magnitude() const;                        // v1.Magnitude()
@@ -58,6 +57,7 @@ public:
     Vector2D& operator-=(const Vector2D& v);        // v1 -= v2
     Vector2D& operator*=(const float n);            // v1 *= n
     Vector2D& operator/=(const float n);            // v1 /= n
+    
 #pragma endregion Operator_
 
 #pragma region StaticConstants

@@ -3,32 +3,42 @@
 #include <limits>
 
 
+/**
+ * 
+ */
 bool CollisionDetection::IsColliding(Body* a, Body* b, std::vector<Contact>& contacts)
 {
-    bool aIsCircle = a->shape->GetType() == CIRCLE;
-    bool bIsCircle = b->shape->GetType() == CIRCLE;
-    bool aIsPolygon = a->shape->GetType() == POLYGON || a->shape->GetType() == BOX;
-    bool bIsPolygon = b->shape->GetType() == POLYGON || b->shape->GetType() == BOX;
+    const bool aIsCircle = a->shape->GetType() == CIRCLE;
+    const bool bIsCircle = b->shape->GetType() == CIRCLE;
+    const bool aIsPolygon = a->shape->GetType() == POLYGON || a->shape->GetType() == BOX;
+    const bool bIsPolygon = b->shape->GetType() == POLYGON || b->shape->GetType() == BOX;
 
     if (aIsCircle && bIsCircle)
     {
         return IsCollidingCircleCircle(a, b, contacts);
     }
+
     if (aIsPolygon && bIsPolygon)
     {
         return IsCollidingPolygonPolygon(a, b, contacts);
     }
+
     if (aIsPolygon && bIsCircle)
     {
         return IsCollidingPolygonCircle(a, b, contacts);
     }
+
     if (aIsCircle && bIsPolygon)
     {
         return IsCollidingPolygonCircle(b, a, contacts);
     }
+
     return false;
 }
 
+/**
+ * 
+ */
 bool CollisionDetection::IsCollidingCircleCircle(Body* a, Body* b, std::vector<Contact>& contacts)
 {
     CircleShape* aCircleShape = (CircleShape*)a->shape;
@@ -37,12 +47,15 @@ bool CollisionDetection::IsCollidingCircleCircle(Body* a, Body* b, std::vector<C
     const Vector2D ab = b->position - a->position;
     const float radiusSum = aCircleShape->radius + bCircleShape->radius;
 
-    bool isColliding = ab.MagnitudeSquared() <= (radiusSum * radiusSum);
+#pragma region Refactoring
+    // bool isColliding = 
+#pragma endregion 
 
-    if (!isColliding)
+    if (!(ab.MagnitudeSquared() <= (radiusSum * radiusSum)))
     {
         return false;
     }
+
     Contact contact;
     contact.a = a;
     contact.b = b;
@@ -60,18 +73,25 @@ bool CollisionDetection::IsCollidingCircleCircle(Body* a, Body* b, std::vector<C
     return true;
 }
 
+/**
+ * 
+ */
 bool CollisionDetection::IsCollidingPolygonPolygon(Body* a, Body* b, std::vector<Contact>& contacts)
 {
     PolygonShape* aPolygonShape = (PolygonShape*)a->shape;
     PolygonShape* bPolygonShape = (PolygonShape*)b->shape;
+    
     int aIndexReferenceEdge, bIndexReferenceEdge;
     Vector2D aSupportPoint, bSupportPoint;
-    float abSeparation = aPolygonShape->FindMinSeparation(bPolygonShape, aIndexReferenceEdge, aSupportPoint);
+    const float abSeparation = aPolygonShape->FindMinSeparation(bPolygonShape, aIndexReferenceEdge, aSupportPoint);
+    
     if (abSeparation >= 0)
     {
         return false;
     }
-    float baSeparation = bPolygonShape->FindMinSeparation(aPolygonShape, bIndexReferenceEdge, bSupportPoint);
+
+    const float baSeparation = bPolygonShape->FindMinSeparation(aPolygonShape, bIndexReferenceEdge, bSupportPoint);
+    
     if (baSeparation >= 0)
     {
         return false;
@@ -79,7 +99,9 @@ bool CollisionDetection::IsCollidingPolygonPolygon(Body* a, Body* b, std::vector
 
     PolygonShape* referenceShape;
     PolygonShape* incidentShape;
+    
     int indexReferenceEdge;
+    
     if (abSeparation > baSeparation)
     {
         referenceShape = aPolygonShape;
@@ -94,24 +116,29 @@ bool CollisionDetection::IsCollidingPolygonPolygon(Body* a, Body* b, std::vector
     }
 
     // Find the reference edge based on the index that returned from the function
-    Vector2D referenceEdge = referenceShape->EdgeAt(indexReferenceEdge);
+    const Vector2D referenceEdge = referenceShape->EdgeAt(indexReferenceEdge);
 
     /////////////////////////////////////
     // Clipping
     /////////////////////////////////////
     int incidentIndex = incidentShape->FindIncidentEdge(referenceEdge.Normal());
     int incidentNextIndex = (incidentIndex + 1) % incidentShape->worldVertices.size();
-    Vector2D v0 = incidentShape->worldVertices[incidentIndex];
-    Vector2D v1 = incidentShape->worldVertices[incidentNextIndex];
+    
+    const Vector2D v0 = incidentShape->worldVertices[incidentIndex];
+    const Vector2D v1 = incidentShape->worldVertices[incidentNextIndex];
 
     std::vector<Vector2D> contactPoints = {v0, v1};
     std::vector<Vector2D> clippedPoints = contactPoints;
+    
     for (int i = 0; i < referenceShape->worldVertices.size(); i++)
     {
         if (i == indexReferenceEdge) continue;
-        Vector2D c0 = referenceShape->worldVertices[i];
-        Vector2D c1 = referenceShape->worldVertices[(i + 1) % referenceShape->worldVertices.size()];
-        int numClipped = referenceShape->ClipSegmentToLine(contactPoints, clippedPoints, c0, c1);
+
+        const Vector2D c0 = referenceShape->worldVertices[i];
+        const Vector2D c1 = referenceShape->worldVertices[(i + 1) % referenceShape->worldVertices.size()];
+        
+        const int numClipped = referenceShape->ClipSegmentToLine(contactPoints, clippedPoints, c0, c1);
+        
         if (numClipped < 2)
         {
             break;
@@ -120,12 +147,13 @@ bool CollisionDetection::IsCollidingPolygonPolygon(Body* a, Body* b, std::vector
         contactPoints = clippedPoints;  // make the next contact points the ones that were just clipped
     }
 
-    auto vref = referenceShape->worldVertices[indexReferenceEdge];
+    const auto vref = referenceShape->worldVertices[indexReferenceEdge];
 
     // Loop all clipped points, but only consider those where separation is negative (objects are penetrating each other)
     for (auto& vclip : clippedPoints)
     {
-        float separation = (vclip - vref).DotProduct(referenceEdge.Normal());
+        const float separation = (vclip - vref).DotProduct(referenceEdge.Normal());
+        
         if (separation <= 0)
         {
             Contact contact;
@@ -143,9 +171,13 @@ bool CollisionDetection::IsCollidingPolygonPolygon(Body* a, Body* b, std::vector
             contacts.push_back(contact);
         }
     }
+
     return true;
 }
 
+/**
+ * 
+ */
 bool CollisionDetection::IsCollidingPolygonCircle(Body* polygon, Body* circle, std::vector<Contact>& contacts)
 {
     const PolygonShape* polygonShape = (PolygonShape*)polygon->shape;
@@ -166,8 +198,8 @@ bool CollisionDetection::IsCollidingPolygonCircle(Body* polygon, Body* circle, s
         Vector2D normal = edge.Normal();
 
         // Compare the circle center with the rectangle vertex
-        Vector2D vertexToCircleCenter = circle->position - polygonVertices[currVertex];
-        float projection = vertexToCircleCenter.DotProduct(normal);
+        const Vector2D vertexToCircleCenter = circle->position - polygonVertices[currVertex];
+        const float projection = vertexToCircleCenter.DotProduct(normal);
 
         // If we found a dot product projection that is in the positive/outside side of the normal
         if (projection > 0)
