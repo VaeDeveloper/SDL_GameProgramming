@@ -8,14 +8,16 @@
  * @functions   Add(), Sub(), Scale(), Rotate(return Vector2D), Magnitude(return float), MagnitudeSquared(return float)
  * Normalize(return Vector2D&), Unitvector(return Vector2D), Normal(return Vector2D), DotProduct(return float), CrossProduct(return float)
  */
+
 struct Vector2D
 {
 
 public:
 
+
+    /* data */
     float x;
     float y;
-
 
     Vector2D();
     Vector2D(float x, float y);

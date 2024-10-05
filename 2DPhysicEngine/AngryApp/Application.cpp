@@ -212,9 +212,13 @@ void Application::Input()
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_ESCAPE) running = false;
                 if (event.key.keysym.sym == SDLK_d) debug = !debug;
-                if (event.key.keysym.sym == SDLK_UP) world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(0.0, -600.0));
-                if (event.key.keysym.sym == SDLK_LEFT) world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(-400.0, 0.0));
-                if (event.key.keysym.sym == SDLK_RIGHT) world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(+400.0, 0.0));
+                if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_SPACE)
+                {
+
+                    world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(0.0, -1110.0));
+                }
+                if (event.key.keysym.sym == SDLK_LEFT) world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(-50.0, 0.0));
+                if (event.key.keysym.sym == SDLK_RIGHT) world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(+50.0, 0.0));
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
