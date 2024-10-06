@@ -44,11 +44,7 @@ bool InitializeWindow(void)
     CHECK(_Renderer, "Error Creting SDL renderer.");  //
 
     SDL_SetRenderDrawBlendMode(_Renderer, SDL_BLENDMODE_BLEND);
-
-    /* Create and check a color buffer */
     CHECK(AllocateColorBuffer(), "Error allocating color buffer");
-
-    /* Create and check a texture to store the color buffer in a format suitable for SDL rendering*/
     CHECK(AllocateColorBufferTexture(), "Error allocating color buffer texture");  //
 
     return true;
@@ -68,10 +64,11 @@ bool AllocateColorBuffer(void)
      * It holds an array of `color_t` values, one for each pixel on the screen (width * height).
      */
     _ColorBuffer = (color_t*)malloc(sizeof(color_t) * WINDOW_WIDTH * WINDOW_HEIGHT);
-
+    CHECK(_ColorBuffer,"Error Allocating memory for color buffer");
+    
     if (_ColorBuffer == NULL)
     {
-        LOG(stderr, "Error Allocating memory for color buffer");
+        LOG(stderr," error color buffer");
         return false;
     }
 
@@ -184,16 +181,17 @@ void DrawRect(int x, int y, int width, int height, color_t color)
  */
 void DrawLine(int x0, int y0, int x1, int y1, color_t color)
 {
-    int deltaX = (x1 - x0);
-    int deltaY = (y1 - y0);
+
+    const int deltaX = (x1 - x0);
+    const int deltaY = (y1 - y0);
 
     /* clang-format off */
-    int longestSideLength = (abs(deltaX) >= abs(deltaY)) ?               //
+    const int longestSideLength = (abs(deltaX) >= abs(deltaY)) ?               //
                                 abs(deltaX) : abs(deltaY);  //
     /* clang-format on */
 
-    float xIncrement = (float)deltaX / (float)longestSideLength;
-    float yIncrement = (float)deltaY / (float)longestSideLength;
+    const float xIncrement = (float)deltaX / (float)longestSideLength;
+    const float yIncrement = (float)deltaY / (float)longestSideLength;
 
     float currentX = (float)x0;
     float currentY = (float)y0;
@@ -220,10 +218,10 @@ void DrawLine(int x0, int y0, int x1, int y1, color_t color)
  */
 void BresenhamLine(int x0, int y0, int x1, int y1, color_t color)
 {
-    int dx = abs(x1 - x0);
-    int dy = abs(y1 - y0);
-    int sx = (x0 < x1) ? 1 : -1;
-    int sy = (y0 < y1) ? 1 : -1;
+    const int dx = abs(x1 - x0);
+    const int dy = abs(y1 - y0);
+    const int sx = (x0 < x1) ? 1 : -1;
+    const int sy = (y0 < y1) ? 1 : -1;
     int err = dx - dy;
 
     while (true)
