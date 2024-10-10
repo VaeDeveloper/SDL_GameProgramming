@@ -5,7 +5,7 @@
 #include "../Physics/Contact.h"
 #include "../Physics/Constraint.h"
 
-#define DEBUG_IFNO (1)
+#define DEBUG_IFNO (0)
 
 
 /**
