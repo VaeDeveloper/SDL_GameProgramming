@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 #include "Utilities/Deffinitions.h"
 
+
 /**
  * Initializes the window for rendering.
  *
