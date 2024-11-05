@@ -5,25 +5,15 @@
 #include "iostream"
 
 
-/**
- * 
- */
 bool Application::IsRunning()
 {
     return running;
 }
-
-/** 
- *  Setup function(executed once in the beginning of the simulation)
- */
+/* Setup function(executed once in the beginning of the simulation)*/
 void Application::Setup()
 {
     std::cout << "Application Initialization \n";
 }
-
-/**
- * Setup override
- */
 void Application::Setup(int clothWidth, int clothHeight, int clothSpacing)
 {
     graphic = new Graphics();
@@ -33,17 +23,15 @@ void Application::Setup(int clothWidth, int clothHeight, int clothSpacing)
     clothWidth /= clothSpacing;
     clothHeight /= clothSpacing;
 
-    const int startX = graphic->Width() * 0.5f - clothWidth * clothSpacing * 0.5f;
-    const int startY = graphic->Height() * 0.1f;
+    int startX = graphic->Width() * 0.5f - clothWidth * clothSpacing * 0.5f;
+    int startY = graphic->Height() * 0.1f;
 
     cloth = new Cloth(clothWidth, clothHeight, clothSpacing, startX, startY);
 
     lastUpdateTime = SDL_GetTicks();
 }
 
-/** 
- * Input processing
- */
+/* Input processing */
 void Application::Input()
 {
     SDL_Event event;
@@ -118,23 +106,17 @@ void Application::Input()
         }
     }
 }
-
-/**
- *   Update function(called several times per second to update objects)
- */
+/*  Update function(called several times per second to update objects) */
 void Application::Update()
 {
-    const Uint32 currentTime = SDL_GetTicks();
+    Uint32 currentTime = SDL_GetTicks();
     float deltaTime = (currentTime - lastUpdateTime) / PhysicEngine::DotPerTimeSeconds;
 
     cloth->Update(graphic, mouse, deltaTime);
 
     lastUpdateTime = currentTime;
 }
-
-/** 
- * Render function (called several times per second to draw objects)
- */
+/*  Render function (called several times per second to draw objects) */
 void Application::Render()
 {
     Graphics::ClearScreen(0xFF00000000);
@@ -143,10 +125,7 @@ void Application::Render()
 
     Graphics::RenderFrame();
 }
-
-/**
- * Destroy function to delete objects and close the window
- */
+/* Destroy function to delete objects and close the window*/
 void Application::Destroy()
 {
     delete mouse;
