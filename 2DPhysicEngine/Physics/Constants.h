@@ -15,6 +15,6 @@ constexpr float ZERO_FLOAT = 0.0f;
 constexpr float NEGATIVE_FLOAT = -1.0f;
 constexpr float POSITIVE_FLOAT = 1.0f;
 constexpr float DotPerTimeSeconds = 1000.0f;
-}  // namespace PhysicEngine
+} 
 
 #endif  // ! CONSTANTS_H
