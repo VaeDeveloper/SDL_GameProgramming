@@ -1,8 +1,7 @@
 #include "ECS.h"
+#include <algorithm>
 
-// TODO implementation function with ECS.h
-//
-//
+
 int Entity::GetID() const 
 {
     return ID;
@@ -10,18 +9,23 @@ int Entity::GetID() const
 
 void System::AddEntityToSystem(Entity entity)
 {
+    entities.push_back(entity);
 }
 
-void System::RemoveEntityToSystem(Entity Entity)
+void System::RemoveEntityToSystem(Entity entity)
 {
+    entities.erase(std::remove_if(entities.begin(), entities.end(), [&entity](Entity other)
+    {
+        return entity == other;
+    }), entities.end());
 }
 
 std::vector<Entity> System::GetSystemEntity() const
 {
-    return std::vector<Entity>();
+    return entities;
 }
 
-Signature& System::GetComponentSignature() const
+const Signature& System::GetComponentSignature() const
 {
-    // TODO: insert return statement here
+    return componentSignature;
 }

@@ -33,6 +33,11 @@ public:
 
     int GetID() const;
 
+    bool operator==(const Entity& other) const { return ID == other.ID; }
+    bool operator!=(const Entity& other) const { return ID != other.ID; }
+    bool operator<(const Entity& other) const { return ID < other.ID; }
+    bool operator>(const Entity& other) const { return ID > other.ID; }
+
 };
 
 class System
@@ -46,9 +51,9 @@ public:
     ~System() = default;
 
     void AddEntityToSystem(Entity entity);
-    void RemoveEntityToSystem(Entity Entity);
+    void RemoveEntityToSystem(Entity entity);
     std::vector<Entity> GetSystemEntity() const;
-    Signature& GetComponentSignature() const;
+    const Signature& GetComponentSignature() const;
 
     template<typename TComponent> 
     void RequireComponent();
