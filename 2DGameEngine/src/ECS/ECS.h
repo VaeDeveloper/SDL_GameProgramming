@@ -212,7 +212,7 @@ class Registry
 private:
     int numEntity = 0;
 
-    std::vector<IPool*> componentPool;
+    std::vector<IPool*> componentPools;
     std::vector<Signature> entityComponentSignature;
     std::unordered_map<std::type_index, System*> systems;
 
@@ -243,6 +243,31 @@ inline void System::RequireComponent()
 template <typename TComponent, typename... TArgs>
 inline void Registry::AddComponent(Entity entity, TArgs &&...args)
 {
+    const auto componentID = Component<TComponent>::GetID();
+    const auto entityID = entity.GetID();
+
+    if (componentID >= componentPools.size())
+    {
+        componentPools.resize(componentID + 1, nullptr);
+    }
+
+    if (!componentPools[componentID])
+    {
+        Pool<TComponent>* newComponentPool = new Pool<TComponent>();
+        componentPools[componentID] = newComponentPool;
+    }
+
+    Pool<TComponent>* componentPool = componentPools[componentID];
+
+    if (entityID >= componentPool->GetSize())
+    {
+        componentPool->Resize(numEntity);
+    }
+
+    TComponent newComponent(std::forward<TArgs>(args)...);
+
+    componentPool->Set(entityID, newComponent);
+    entityComponentSignature[entityID].set(componentID);
 }
 
 
