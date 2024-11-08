@@ -3,24 +3,53 @@
 
 #include <bitset>
 #include <vector>
+#include <set>
+#include <unordered_map>
+#include <typeindex>
 
+
+/**
+ * Defines the maximum number of components that can be registered.
+ */
 const unsigned int MAX_COMPONENTS = 32;
+
+/**
+ * Represents a signature, which is a bitset indicating the presence or absence of components.
+ * Each bit corresponds to a specific component type.
+ */
 using Signature = std::bitset<MAX_COMPONENTS>;
 
+/**
+ * Base interface for all components. Contains a static integer that is used to generate unique IDs
+ * for each component type.
+ */
 struct IComponent
 {
 protected:
+    /** 
+     * The next available ID for a component. Each new component type will increment this value.
+     */
     static int NextID;
 };
 
+/**
+ * Template class for creating specific component types.
+ *
+ * @tparam T The component type being created.
+ */
 template<class T>
 class Component : public IComponent
 {
-     static int GetID() 
-     {
+   /**
+    * Retrieves a unique ID for the component type.
+    * 
+    * @return A unique ID for the component type.
+    */
+    static int GetID() 
+    {
         static auto ID = NextID++;
         return ID;
-     }
+    }
 };
 
 class Entity
@@ -127,12 +156,24 @@ class Registry
 private:
     int numEntity = 0;
 
+    std::vector<IPool*> componentPool;
+    std::vector<Signature> entityComponentSignature;
+    std::unordered_map<std::type_index, System*> systems;
+
+    std::set<Entity> entitiesToBeAdded;
+    std::set<Entity> entitiesToBeKilled;
+
 public:
     Registry() = default;
 
-    Entity CreateEntity();
-    void KillEntity(Entity entity);
-    void 
+    void Update();
+
+    Entity CreateEntitity();
+    void AddEntityToSystem(Entity entity);
+
+
+    template<typename TComponent, typename ...TArgs>
+    void AddComponent(Entity entity, TArgs&& ...args);
 };
 
 
@@ -143,7 +184,10 @@ inline void System::RequireComponent()
     componentSignature.set(componentID);
 }
 
+template <typename TComponent, typename... TArgs>
+inline void Registry::AddComponent(Entity entity, TArgs &&...args)
+{
+}
+
 
 #endif
-
-
