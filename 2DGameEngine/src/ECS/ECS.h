@@ -52,22 +52,78 @@ class Component : public IComponent
     }
 };
 
+/**
+ * Represents an entity with a unique identifier.
+ */
 class Entity
 {
 private:
+    /** 
+     * Unique identifier for the entity.
+     */
     int ID;
 
 public:
-    Entity(int id) : ID(id){}
+/**
+     * Constructs an Entity with a specified ID.
+     *
+     * @param id The unique ID to assign to this entity.
+     */
+    Entity(int id) : ID(id) {}
+
+    /**
+     * Default copy constructor.
+     *
+     * @param other The entity to copy from.
+     */
     Entity(const Entity& other) = default;
+
+    /**
+     * Retrieves the unique ID of this entity.
+     *
+     * @return The ID of this entity.
+     */
     int GetID() const;
 
-    Entity& operator = (const Entity& other) = default;
-    bool operator==(const Entity& other) const { return ID == other.ID; }
-    bool operator!=(const Entity& other) const { return ID != other.ID; }
-    bool operator<(const Entity& other) const { return ID < other.ID; }
-    bool operator>(const Entity& other) const { return ID > other.ID; }
+    /**
+     * Default assignment operator.
+     *
+     * @param other The entity to assign from.
+     * @return A reference to this entity.
+     */
+    Entity& operator=(const Entity& other) = default;
 
+    /**
+     * Equality operator to compare two entities by their IDs.
+     *
+     * @param other The entity to compare with.
+     * @return True if the entities have the same ID, false otherwise.
+     */
+    bool operator==(const Entity& other) const { return ID == other.ID; }
+
+    /**
+     * Inequality operator to compare two entities by their IDs.
+     *
+     * @param other The entity to compare with.
+     * @return True if the entities have different IDs, false otherwise.
+     */
+    bool operator!=(const Entity& other) const { return ID != other.ID; }
+
+    /**
+     * Less-than operator to compare two entities by their IDs.
+     *
+     * @param other The entity to compare with.
+     * @return True if this entity's ID is less than the other's ID, false otherwise.
+     */
+    bool operator<(const Entity& other) const { return ID < other.ID; }
+
+    /**
+     * Greater-than operator to compare two entities by their IDs.
+     *
+     * @param other The entity to compare with.
+     * @return True if this entity's ID is greater than the other's ID, false otherwise.
+     */
+    bool operator>(const Entity& other) const { return ID > other.ID; }
 };
 
 class System
