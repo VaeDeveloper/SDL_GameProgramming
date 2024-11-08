@@ -7,7 +7,6 @@
 #include <unordered_map>
 #include <typeindex>
 
-
 /**
  * Defines the maximum number of components that can be registered.
  */
@@ -145,6 +144,9 @@ public:
     void RequireComponent();
 };
 
+/**
+ * Interface representing a generic pool. Serves as a base class for typed pools.
+ */
 class IPool
 {
 public:
@@ -152,95 +154,233 @@ public:
 
 };
 
+/**
+ * A pool class for managing a collection of objects of a specific type.
+ *
+ * @tparam T The type of objects that the pool will manage.
+ */
 template<class T>
 class Pool : public IPool
 {
 private:
+    /** 
+     * A vector to store the objects in the pool.
+     */
     std::vector<T> data;
 
 public:
+    /**
+     * Constructs a Pool with a specified initial size.
+     *
+     * @param size The initial size of the pool. Defaults to 100.
+     */
     Pool(int size = 100)
     {
         data.resize(size);
     }
 
+    /**
+     * Virtual destructor for the Pool class.
+     */
     virtual ~Pool() = default;
 
+    /**
+     * Checks if the pool is empty.
+     *
+     * @return True if the pool is empty, false otherwise.
+     */
     bool IsEmpty() const
     {
         return data.empty();
     }
 
+    /**
+     * Gets the current size of the pool.
+     *
+     * @return The number of objects in the pool.
+     */
     int GetSize() const
     {
         return data.size();
     }
 
+    /**
+     * Resizes the pool to hold a specified number of objects.
+     *
+     * @param size The new size of the pool.
+     */
     void Resize(int size)
     {
         data.resize(size);
     }
 
+    /**
+     * Clears all objects from the pool.
+     */
     void Clear()
     {
         data.clear();
     }
 
+    /**
+     * Adds an object to the pool.
+     *
+     * @param object The object to add to the pool.
+     */
     void Add(T object)
     {
         data.add(object);
     }
 
+    /**
+     * Sets the object at a specified index in the pool.
+     *
+     * @param index The index at which to set the object.
+     * @param object The object to set at the specified index.
+     */
     void Set(int index, T object)
     {
         data[index] = object;
     }
 
+    /**
+     * Gets the object at a specified index in the pool.
+     *
+     * @param index The index of the object to retrieve.
+     * @return A reference to the object at the specified index.
+     */
     T& Get(int index) 
     {
         return static_cast<T&>(data[index]);
     }
 
+    /**
+     * Provides array-style access to the pool.
+     *
+     * @param index The index of the object to access.
+     * @return A reference to the object at the specified index.
+     */
     T& operator[](unsigned int index)
     {
         return data[index];
     }
 };
 
+/**
+ * The Registry class manages entities, components, and systems within an ECS (Entity-Component-System) architecture.
+ */
 class Registry
 {
 private:
+    /** 
+     * Counter to keep track of the total number of entities.
+     */
     int numEntity = 0;
 
+    /** 
+     * Stores component pools, where each pool contains components of a specific type for all entities.
+     */
     std::vector<IPool*> componentPools;
+
+    /** 
+     * Stores a signature for each entity, representing the components associated with the entity.
+     */
     std::vector<Signature> entityComponentSignature;
+
+    /** 
+     * Maps component types to their corresponding systems.
+     */
     std::unordered_map<std::type_index, System*> systems;
 
+    /** 
+     * Stores entities that need to be added to the registry.
+     */
     std::set<Entity> entitiesToBeAdded;
+
+    /** 
+     * Stores entities that are scheduled to be removed (killed) from the registry.
+     */
     std::set<Entity> entitiesToBeKilled;
 
 public:
+    /**
+     * Default constructor for the Registry.
+     */
     Registry() = default;
 
+    /**
+     * Updates the registry, processing any pending entity additions or removals.
+     */
     void Update();
 
+    /**
+     * Creates a new entity and registers it within the registry.
+     *
+     * @return The newly created entity.
+     */
     Entity CreateEntitity();
+
+    /**
+     * Adds an entity to the appropriate systems based on its component signature.
+     *
+     * @param entity The entity to add to relevant systems.
+     */
     void AddEntityToSystem(Entity entity);
 
-
-    template<typename TComponent, typename ...TArgs>
+    /**
+     * Adds a component of type `TComponent` to the specified entity.
+     *
+     * @tparam TComponent The type of component to add.
+     * @tparam TArgs The types of arguments to pass to the component's constructor.
+     * @param entity The entity to add the component to.
+     * @param args Arguments to construct the component.
+     */
+    template<class TComponent, class ...TArgs>
     void AddComponent(Entity entity, TArgs&& ...args);
+
+    /**
+     * Removes a component of type `TComponent` from the specified entity.
+     *
+     * @tparam TComponent The type of component to remove.
+     * @param entity The entity to remove the component from.
+     */
+    template<class TComponent>
+    void RemoveComponent(Entity entity);
+
+    /**
+     * Checks if the specified entity has a component of type `TComponent`.
+     *
+     * @tparam TComponent The type of component to check.
+     * @param entity The entity to check for the component.
+     * @return True if the entity has the component, false otherwise.
+     */
+    template<class TComponent>
+    bool HasComponent(Entity entity) const;
 };
 
-
-template <typename TComponent>
+/**
+ * Sets a requirement for a component type in a system by updating the system's component signature.
+ *
+ * @tparam TComponent The type of component required by the system.
+ */
+template <class TComponent>
 inline void System::RequireComponent()
 {
     const auto componentID = Component<TComponent>::GetID();
     componentSignature.set(componentID);
 }
 
-template <typename TComponent, typename... TArgs>
+
+/**
+ * Adds a component of type `TComponent` to the specified entity, initializing it with given arguments.
+ * Resizes component pools and the pool for this component type if necessary.
+ *
+ * @tparam TComponent The type of component to add.
+ * @tparam TArgs The types of arguments to pass to the component's constructor.
+ * @param entity The entity to which the component will be added.
+ * @param args Arguments used to construct the component.
+ */
+template <class TComponent, class... TArgs>
 inline void Registry::AddComponent(Entity entity, TArgs &&...args)
 {
     const auto componentID = Component<TComponent>::GetID();
@@ -270,5 +410,33 @@ inline void Registry::AddComponent(Entity entity, TArgs &&...args)
     entityComponentSignature[entityID].set(componentID);
 }
 
+/**
+ * Removes a component of type `TComponent` from the specified entity.
+ *
+ * @tparam TComponent The type of component to remove.
+ * @param entity The entity from which the component will be removed.
+ */
+template <class TComponent>
+inline void Registry::RemoveComponent(Entity entity)
+{
+    const auto componentID = Component<TComponent>::GetID();
+    const auto entityID = entity.GetID();
+    entityComponentSignature[entityID].set(componentID, false);
+}
+
+/**
+ * Checks if the specified entity has a component of type `TComponent`.
+ *
+ * @tparam TComponent The type of component to check.
+ * @param entity The entity to check for the component.
+ * @return True if the entity has the component, false otherwise.
+ */
+template <class TComponent>
+inline bool Registry::HasComponent(Entity entity) const
+{
+    const auto componentID = Component<TComponent>::GetID();
+    const auto entityID = entity.GetID();
+    return entityComponentSignature[entityID].test(componentID);
+}
 
 #endif
