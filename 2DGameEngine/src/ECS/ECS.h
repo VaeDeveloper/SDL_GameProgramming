@@ -327,6 +327,7 @@ public:
      */
     void AddEntityToSystem(Entity entity);
 
+    /** COMPONENT MANAGER */
     /**
      * Adds a component of type `TComponent` to the specified entity.
      *
@@ -356,6 +357,31 @@ public:
      */
     template<class TComponent>
     bool HasComponent(Entity entity) const;
+
+    /** SYSTEM MANAGER */
+    /**
+     * 
+     */
+    template<class TSystem, class ...TArgs>
+    void AddSystem(TArgs&& ...args);
+
+    /**
+     * 
+     */
+    template<class TSystem>
+    void RemoveSystem();
+
+    /**
+     * 
+     */
+    template<class TSystem>
+    bool HasSystem() const;
+
+    /**
+     * 
+     */
+    template<class TSystem>
+    TSystem& GetSystem() const;
 };
 
 /**
@@ -437,6 +463,16 @@ inline bool Registry::HasComponent(Entity entity) const
     const auto componentID = Component<TComponent>::GetID();
     const auto entityID = entity.GetID();
     return entityComponentSignature[entityID].test(componentID);
+}
+
+/**
+ * template for add system for registry class 
+ */
+template <class TSystem, class... TArgs>
+inline void Registry::AddSystem(TArgs &&...args)
+{
+    TSystem* newSystem(new TSystem(std::forward<TArgs>(args)...));
+    systems.insert(std::make_pair(std::forward(std::type_index(typeid(TSystem)), newSystem)));
 }
 
 #endif
