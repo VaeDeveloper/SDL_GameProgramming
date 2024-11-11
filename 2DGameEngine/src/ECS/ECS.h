@@ -435,11 +435,11 @@ inline void Registry::AddComponent(Entity entity, TArgs &&...args)
 
     if (!componentPools[componentID])
     {
-        Pool<TComponent>* newComponentPool = new Pool<TComponent>();
+        std::shared_ptr<Pool<TComponent>> newComponentPool = std::make_shared<Pool<TComponent>>();
         componentPools[componentID] = newComponentPool;
     }
 
-    Pool<TComponent>* componentPool = componentPools[componentID];
+    std::shared_ptr<Pool<TComponent>> componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentID]);
 
     if (entityID >= componentPool->GetSize())
     {
@@ -488,7 +488,7 @@ inline bool Registry::HasComponent(Entity entity) const
 template <class TSystem, class... TArgs>
 inline void Registry::AddSystem(TArgs &&...args)
 {
-    TSystem* newSystem(new TSystem(std::forward<TArgs>(args)...));
+    std::shared_ptr<TSystem> newSystem = std::make_shared<TSystem>(std::forward<TArgs>(args)...);
     systems.insert(std::make_pair(std::type_index(typeid(TSystem)), newSystem));
 }
 
