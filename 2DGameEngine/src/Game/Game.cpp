@@ -5,6 +5,8 @@
 #include "../Logger/Logger.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
+#include "../Components/SpriteComponent.h"
+#include "../Systems/RenderSystem.h"
 #include "../Systems/MovementSystem.h"
 
 
@@ -63,11 +65,18 @@ void Game::Initialize()
 void Game::Setup()
 {
 	registry->AddSystem<MovementSystem>();
-
+	registry->AddSystem<RenderSystem>();
 
 	Entity Tank = registry->CreateEntitity();
 	Tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
-	Tank.AddComponent<RigidBodyComponent>(glm::vec2(1.0, 1.0));
+	Tank.AddComponent<RigidBodyComponent>(glm::vec2(400.0, 0.0));
+	Tank.AddComponent<SpriteComponent>(24, 35);
+
+
+		Entity Tank2 = registry->CreateEntitity();
+	Tank2.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+	Tank2.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 133.0));
+	Tank2.AddComponent<SpriteComponent>(144, 35);
 }
 
 void Game::Run()
@@ -108,9 +117,9 @@ void Game::ProcessInput()
 
 void Game::Update()
 {
-
     // If we are too fast, waste some time until we reach the MILLISECS_PER_FRAME
     int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecsPreviousFrame);
+
     if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) {
         SDL_Delay(timeToWait);
     }
@@ -121,8 +130,10 @@ void Game::Update()
     // Store the "previous" frame time
     millisecsPreviousFrame = SDL_GetTicks();
 
-	registry->GetSystem<MovementSystem>().Update(deltaTime);
 	registry->Update();
+
+	registry->GetSystem<MovementSystem>().Update(deltaTime);
+
 }
 
 void Game::Render()
@@ -130,10 +141,7 @@ void Game::Render()
 	SDL_SetRenderDrawColor(renderer, 21, 21, 20, 255);
 	SDL_RenderClear(renderer);
 
-	SDL_Surface* surface = IMG_Load("./assets/images/tank-tiger-right.png");
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-	SDL_FreeSurface(surface);
-
+	registry->GetSystem<RenderSystem>().Update(renderer);
 	SDL_RenderPresent(renderer);
 
 }
