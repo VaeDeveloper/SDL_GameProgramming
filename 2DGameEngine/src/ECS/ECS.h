@@ -371,7 +371,7 @@ public:
      * @tparam TComponent The type of component to remove.
      * @param entity The entity to remove the component from.
      */
-    template<class TComponent>
+    template<typename TComponent>
     void RemoveComponent(Entity entity);
 
     /**
@@ -381,43 +381,62 @@ public:
      * @param entity The entity to check for the component.
      * @return True if the entity has the component, false otherwise.
      */
-    template<class TComponent>
+    template<typename TComponent>
     bool HasComponent(Entity entity) const;
 
-
+    /**
+     * Retrieves a specific component of type TComponent attached to the specified entity.
+     *
+     * @tparam TComponent The type of the component to retrieve.
+     * @param entity The entity from which the component is retrieved.
+     * @return Reference to the component of type TComponent associated with the entity.
+     */
     template<typename TComponent>
-    TComponent& GetComponent() const;
-
-
-
-
+    TComponent& GetComponent(Entity entity) const;
 
     /** SYSTEM MANAGER */
+
+
     /**
-     * 
-     */
-    template<class TSystem, class ...TArgs>
+     * Adds a new system of type TSystem to the registry with optional initialization arguments.
+     *
+     * @tparam TSystem The type of the system to add.
+     * @tparam TArgs Parameter pack for forwarding arguments to the system's constructor.
+     * @param args Arguments to initialize the system.
+     */    template<typename TSystem, typename ...TArgs>
     void AddSystem(TArgs&& ...args);
 
     /**
-     * 
+     * Removes a system of type TSystem from the registry.
+     *
+     * @tparam TSystem The type of the system to remove.
      */
-    template<class TSystem>
+    template<typename TSystem>
     void RemoveSystem();
 
     /**
-     * 
+     * Checks if a system of type TSystem exists in the registry.
+     *
+     * @tparam TSystem The type of the system to check.
+     * @return True if the system exists; otherwise, false.
      */
-    template<class TSystem>
+    template<typename TSystem>
     bool HasSystem() const;
 
     /**
-     * 
+     * Retrieves the system of type TSystem from the registry.
+     *
+     * @tparam TSystem The type of the system to retrieve.
+     * @return Reference to the system of type TSystem.
      */
-    template<class TSystem>
+    template<typename TSystem>
     TSystem& GetSystem() const;
 
-
+    /**
+     * Adds an entity to all relevant systems based on its components.
+     *
+     * @param entity The entity to add to systems.
+     */
     void AddEntityToSystems(Entity entity);
 };
 
@@ -426,7 +445,7 @@ public:
  *
  * @tparam TComponent The type of component required by the system.
  */
-template <class TComponent>
+template <typename TComponent>
 inline void System::RequireComponent()
 {
     const auto componentID = Component<TComponent>::GetID();
@@ -481,7 +500,7 @@ inline void Registry::AddComponent(Entity entity, TArgs &&...args)
  * @tparam TComponent The type of component to remove.
  * @param entity The entity from which the component will be removed.
  */
-template <class TComponent>
+template <typename TComponent>
 inline void Registry::RemoveComponent(Entity entity)
 {
     const auto componentID = Component<TComponent>::GetID();
@@ -496,7 +515,7 @@ inline void Registry::RemoveComponent(Entity entity)
  * @param entity The entity to check for the component.
  * @return True if the entity has the component, false otherwise.
  */
-template <class TComponent>
+template <typename TComponent>
 inline bool Registry::HasComponent(Entity entity) const
 {
     const auto componentID = Component<TComponent>::GetID();
@@ -505,54 +524,113 @@ inline bool Registry::HasComponent(Entity entity) const
     return entityComponentSignatures[entityID].test(componentID);
 }
 
+template <typename TComponent>
+inline TComponent &Registry::GetComponent(Entity entity) const
+{
+    const auto componentID = Component<TComponent>::GetID();
+    const auto entityID = entity.GetID();
+    auto componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentID]);
+
+    return componentPool;
+}
+
 /**
- * template for add system for registry class 
+ * Template method to add a system to the registry with optional initialization arguments.
+ *
+ * @tparam TSystem The type of the system to add.
+ * @tparam TArgs Parameter pack for forwarding arguments to the system's constructor.
+ * @param args Arguments to initialize the system.
  */
-template <class TSystem, class... TArgs>
+template <typename TSystem,typename ...TArgs>
 inline void Registry::AddSystem(TArgs &&...args)
 {
     std::shared_ptr<TSystem> newSystem = std::make_shared<TSystem>(std::forward<TArgs>(args)...);
     systems.insert(std::make_pair(std::type_index(typeid(TSystem)), newSystem));
 }
 
-template <class TSystem>
+/**
+ * Removes a system of type TSystem from the registry.
+ *
+ * @tparam TSystem The type of the system to remove.
+ */
+template <typename TSystem>
 inline void Registry::RemoveSystem()
 {
     auto system = systems.find(std::type_index(typeid(TSystem)));
     systems.erase(system);
 }
 
-template <class TSystem>
+/**
+ * Checks if a system of type TSystem exists in the registry.
+ *
+ * @tparam TSystem The type of the system to check.
+ * @return True if the system exists; otherwise, false.
+ */
+template <typename TSystem>
 inline bool Registry::HasSystem() const
 {
     return systems.find(std::type_index(typeid(TSystem))) != systems.end();
 }
 
-template <class TSystem>
+/**
+ * Retrieves the system of type TSystem from the registry.
+ *
+ * @tparam TSystem The type of the system to retrieve.
+ * @return Reference to the system of type TSystem.
+ * @throws std::bad_cast if the system type is invalid.
+ */
+template <typename TSystem>
 inline TSystem &Registry::GetSystem() const
 {
     auto system = systems.find(std::type_index(typeid(TSystem)));
     return *(std::static_pointer_cast<TSystem>(system->second));
 }
 
-
+/**
+ * Adds a component of type TComponent to the specified entity.
+ *
+ * @tparam TComponent The type of the component to add.
+ * @tparam TArgs Parameter pack for forwarding arguments to the component's constructor.
+ * @param args Arguments to initialize the component.
+ */
 template <typename TComponent, typename ...TArgs>
-void Entity::AddComponent(TArgs&& ...args) {
+void Entity::AddComponent(TArgs&& ...args) 
+{
     registry->AddComponent<TComponent>(*this, std::forward<TArgs>(args)...);
 }
 
+/**
+ * Removes a component of type TComponent from the specified entity.
+ *
+ * @tparam TComponent The type of the component to remove.
+ */
 template <typename TComponent>
-void Entity::RemoveComponent() {
+void Entity::RemoveComponent() 
+{
     registry->RemoveComponent<TComponent>(*this);
 }
 
+/**
+ * Checks if an entity has a component of type TComponent.
+ *
+ * @tparam TComponent The type of the component to check.
+ * @return True if the component exists; otherwise, false.
+ */
 template <typename TComponent>
-bool Entity::HasComponent() const {
+bool Entity::HasComponent() const 
+{
     return registry->HasComponent<TComponent>(*this);
 }
 
+/**
+ * Retrieves a component of type TComponent from the specified entity.
+ *
+ * @tparam TComponent The type of the component to retrieve.
+ * @return Reference to the component of type TComponent associated with the entity.
+ */
 template <typename TComponent>
-TComponent& Entity::GetComponent() const {
+TComponent& Entity::GetComponent() const 
+{
     return registry->GetComponent<TComponent>(*this);
 }
 
