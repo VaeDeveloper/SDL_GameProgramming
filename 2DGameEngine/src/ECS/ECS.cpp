@@ -1,6 +1,7 @@
 #include "ECS.h"
 #include <algorithm>
 
+int IComponent::NextID = 0;
 
 int Entity::GetID() const 
 {

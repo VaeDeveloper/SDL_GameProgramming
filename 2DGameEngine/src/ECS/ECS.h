@@ -43,6 +43,7 @@ protected:
 template<class T>
 class Component : public IComponent
 {
+public:
    /**
     * Retrieves a unique ID for the component type.
     * 
@@ -128,6 +129,18 @@ public:
      */
     bool operator>(const Entity& other) const { return ID > other.ID; }
 
+
+    template<typename TComponent, typename ...TArgs>
+    void AddComponent(TArgs&& ...args);
+
+    template<typename TComponent>
+    void RemoveComponent();
+
+    template<typename TComponent>
+    bool HasComponent() const;
+
+    template<typename TComponent>
+    TComponent& GetComponent() const;
 
     // Hold a pointer to the entity's owner registry
     Registry* registry;
@@ -349,7 +362,7 @@ public:
      * @param entity The entity to add the component to.
      * @param args Arguments to construct the component.
      */
-    template<class TComponent, class ...TArgs>
+    template<typename TComponent,typename ...TArgs>
     void AddComponent(Entity entity, TArgs&& ...args);
 
     /**
@@ -370,6 +383,14 @@ public:
      */
     template<class TComponent>
     bool HasComponent(Entity entity) const;
+
+
+    template<typename TComponent>
+    TComponent& GetComponent() const;
+
+
+
+
 
     /** SYSTEM MANAGER */
     /**
@@ -422,13 +443,13 @@ inline void System::RequireComponent()
  * @param entity The entity to which the component will be added.
  * @param args Arguments used to construct the component.
  */
-template <class TComponent, class... TArgs>
+template <typename TComponent, typename... TArgs>
 inline void Registry::AddComponent(Entity entity, TArgs &&...args)
 {
     const auto componentID = Component<TComponent>::GetID();
     const auto entityID = entity.GetID();
 
-    if (componentID >= componentPools.size())
+    if (componentID >= static_cast<int>(componentPools.size()))
     {
         componentPools.resize(componentID + 1, nullptr);
     }
@@ -450,6 +471,8 @@ inline void Registry::AddComponent(Entity entity, TArgs &&...args)
 
     componentPool->Set(entityID, newComponent);
     entityComponentSignatures[entityID].set(componentID);
+
+    Logger::Log("Component id = " + std::to_string(componentID) + " was added to entity id " + std::to_string(entityID));
 }
 
 /**
@@ -512,4 +535,27 @@ inline TSystem &Registry::GetSystem() const
     return *(std::static_pointer_cast<TSystem>(system->second));
 }
 
+
+template <typename TComponent, typename ...TArgs>
+void Entity::AddComponent(TArgs&& ...args) {
+    registry->AddComponent<TComponent>(*this, std::forward<TArgs>(args)...);
+}
+
+template <typename TComponent>
+void Entity::RemoveComponent() {
+    registry->RemoveComponent<TComponent>(*this);
+}
+
+template <typename TComponent>
+bool Entity::HasComponent() const {
+    return registry->HasComponent<TComponent>(*this);
+}
+
+template <typename TComponent>
+TComponent& Entity::GetComponent() const {
+    return registry->GetComponent<TComponent>(*this);
+}
+
+
 #endif
+
