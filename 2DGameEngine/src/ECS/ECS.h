@@ -478,12 +478,14 @@ inline void Registry::AddSystem(TArgs &&...args)
 template <class TSystem>
 inline void Registry::RemoveSystem()
 {
+    auto system = systems.find(std::type_index(typeid(TSystem)));
+    systems.erase(system);
 }
 
 template <class TSystem>
 inline bool Registry::HasSystem() const
 {
-    return false;
+    return systems.find(std::type_index(typeid(TSystem))) != systems.end();
 }
 
 template <class TSystem>

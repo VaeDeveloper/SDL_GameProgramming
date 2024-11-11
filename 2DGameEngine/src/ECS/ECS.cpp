@@ -29,3 +29,20 @@ const Signature& System::GetComponentSignature() const
 {
     return componentSignature;
 }
+
+void Registry::AddEntityToSystems(Entity entity)
+{
+    const auto entityID = entity.GetID();
+    const auto entityComponentSignature = entityComponentSignatures[entityID];
+
+    for (auto& system : systems)
+    {
+        const auto& systemComponentSignature = system.second->GetComponentSignature();
+        bool IsInterested = (entityComponentSignature & systemComponentSignature) == systemComponentSignature;
+
+        if (IsInterested)
+        {
+            system.second->AddEntityToSystem(entity);
+        }
+    }
+}
