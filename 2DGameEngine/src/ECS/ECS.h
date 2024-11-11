@@ -288,7 +288,7 @@ private:
     /** 
      * Stores component pools, where each pool contains components of a specific type for all entities.
      */
-    std::vector<IPool*> componentPools;
+    std::vector<std::shared_ptr<IPool>> componentPools;
 
     /** 
      * Stores a signature for each entity, representing the components associated with the entity.
@@ -298,7 +298,7 @@ private:
     /** 
      * Maps component types to their corresponding systems.
      */
-    std::unordered_map<std::type_index, System*> systems;
+    std::unordered_map<std::type_index, std::shared_ptr<System>> systems;
 
     /** 
      * Stores entities that need to be added to the registry.
