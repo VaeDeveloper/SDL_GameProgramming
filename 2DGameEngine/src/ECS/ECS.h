@@ -229,7 +229,7 @@ public:
      */
     void Add(T object)
     {
-        data.add(object);
+        data.push_back(object);
     }
 
     /**
