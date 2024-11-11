@@ -133,7 +133,7 @@ private:
 
 public:
     System() = default;
-    ~System() = default;
+    virtual ~System() = default;
 
     void AddEntityToSystem(Entity entity);
     void RemoveEntityToSystem(Entity entity);
@@ -472,7 +472,24 @@ template <class TSystem, class... TArgs>
 inline void Registry::AddSystem(TArgs &&...args)
 {
     TSystem* newSystem(new TSystem(std::forward<TArgs>(args)...));
-    systems.insert(std::make_pair(std::forward(std::type_index(typeid(TSystem)), newSystem)));
+    systems.insert(std::make_pair(std::type_index(typeid(TSystem)), newSystem));
+}
+
+template <class TSystem>
+inline void Registry::RemoveSystem()
+{
+}
+
+template <class TSystem>
+inline bool Registry::HasSystem() const
+{
+    return false;
+}
+
+template <class TSystem>
+inline TSystem &Registry::GetSystem() const
+{
+    // TODO: insert return statement here
 }
 
 #endif
