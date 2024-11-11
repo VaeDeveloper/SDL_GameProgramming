@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include "../Logger/Logger.h"
 #include "../Components/TransformComponent.h"
+#include "../Components/RigidBodyComponent.h"
+#include "../Systems/MovementSystem.h"
 
 
 Game::Game()
@@ -60,9 +62,12 @@ void Game::Initialize()
 
 void Game::Setup()
 {
-	Entity Tank = registry->CreateEntitity();
-	registry->AddComponent<TransformComponent>(Tank, glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+	registry->AddSystem<MovementSystem>();
 
+
+	Entity Tank = registry->CreateEntitity();
+	Tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+	Tank.AddComponent<RigidBodyComponent>(glm::vec2(1.0, 1.0));
 }
 
 void Game::Run()
@@ -115,6 +120,9 @@ void Game::Update()
 
     // Store the "previous" frame time
     millisecsPreviousFrame = SDL_GetTicks();
+
+	registry->GetSystem<MovementSystem>().Update(deltaTime);
+	registry->Update();
 }
 
 void Game::Render()

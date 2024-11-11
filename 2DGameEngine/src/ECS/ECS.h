@@ -506,6 +506,8 @@ inline void Registry::RemoveComponent(Entity entity)
     const auto componentID = Component<TComponent>::GetID();
     const auto entityID = entity.GetID();
     entityComponentSignatures[entityID].set(componentID, false);
+
+    Logger::Log("Component id = " + std::to_string(componentID) + " was remove from entity id " + std::to_string(entityID));
 }
 
 /**
@@ -531,7 +533,7 @@ inline TComponent &Registry::GetComponent(Entity entity) const
     const auto entityID = entity.GetID();
     auto componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentID]);
 
-    return componentPool;
+    return componentPool->Get(entityID);
 }
 
 /**
