@@ -30,10 +30,42 @@ const Signature& System::GetComponentSignature() const
     return componentSignature;
 }
 
+void Registry::Update()
+{
+    // Add the entities that are waiting to be created to the active Systems
+    for (auto entity : entitiesToBeAdded)
+    {
+        AddEntityToSystems(entity);
+    }
+
+    entitiesToBeAdded.clear();
+
+}
+
+Entity Registry::CreateEntitity()
+{
+    int entityId = numEntities++;
+
+    Entity entity(entityId);
+    entity.registry= this;
+
+    entitiesToBeAdded.insert(entity);
+
+    if (entityId >= static_cast<int>(entityComponentSignatures.size()))
+    {
+        entityComponentSignatures.resize(entityId + 1);
+    }
+
+    Logger::Log("Entity created with id = " + std::to_string(entityId));
+
+    return entity;
+
+}
+
 void Registry::AddEntityToSystems(Entity entity)
 {
     const auto entityID = entity.GetID();
-    const auto entityComponentSignature = entityComponentSignatures[entityID];
+    const auto& entityComponentSignature = entityComponentSignatures[entityID];
 
     for (auto& system : systems)
     {

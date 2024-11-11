@@ -6,6 +6,10 @@
 #include <set>
 #include <unordered_map>
 #include <typeindex>
+#include <memory>
+#include "../Logger/Logger.h"
+
+class Registry;
 
 /**
  * Defines the maximum number of components that can be registered.
@@ -123,6 +127,10 @@ public:
      * @return True if this entity's ID is greater than the other's ID, false otherwise.
      */
     bool operator>(const Entity& other) const { return ID > other.ID; }
+
+
+    // Hold a pointer to the entity's owner registry
+    Registry* registry;
 };
 
 class System
@@ -275,7 +283,7 @@ private:
     /** 
      * Counter to keep track of the total number of entities.
      */
-    int numEntity = 0;
+    int numEntities = 0;
 
     /** 
      * Stores component pools, where each pool contains components of a specific type for all entities.
@@ -285,7 +293,7 @@ private:
     /** 
      * Stores a signature for each entity, representing the components associated with the entity.
      */
-    std::vector<Signature> entityComponentSignature;
+    std::vector<Signature> entityComponentSignatures;
 
     /** 
      * Maps component types to their corresponding systems.
@@ -306,7 +314,12 @@ public:
     /**
      * Default constructor for the Registry.
      */
-    Registry() = default;
+    Registry() { Logger::Log("Registry constructor called"); }
+
+    /**
+     * Destructor for Registry
+     */
+    ~Registry() { Logger::Log("Registry destructor called "); }
 
     /**
      * Updates the registry, processing any pending entity additions or removals.
@@ -382,6 +395,9 @@ public:
      */
     template<class TSystem>
     TSystem& GetSystem() const;
+
+
+    void AddEntityToSystems(Entity entity);
 };
 
 /**
@@ -427,13 +443,13 @@ inline void Registry::AddComponent(Entity entity, TArgs &&...args)
 
     if (entityID >= componentPool->GetSize())
     {
-        componentPool->Resize(numEntity);
+        componentPool->Resize(numEntities);
     }
 
     TComponent newComponent(std::forward<TArgs>(args)...);
 
     componentPool->Set(entityID, newComponent);
-    entityComponentSignature[entityID].set(componentID);
+    entityComponentSignatures[entityID].set(componentID);
 }
 
 /**
@@ -447,7 +463,7 @@ inline void Registry::RemoveComponent(Entity entity)
 {
     const auto componentID = Component<TComponent>::GetID();
     const auto entityID = entity.GetID();
-    entityComponentSignature[entityID].set(componentID, false);
+    entityComponentSignatures[entityID].set(componentID, false);
 }
 
 /**
@@ -462,7 +478,8 @@ inline bool Registry::HasComponent(Entity entity) const
 {
     const auto componentID = Component<TComponent>::GetID();
     const auto entityID = entity.GetID();
-    return entityComponentSignature[entityID].test(componentID);
+
+    return entityComponentSignatures[entityID].test(componentID);
 }
 
 /**
@@ -491,7 +508,8 @@ inline bool Registry::HasSystem() const
 template <class TSystem>
 inline TSystem &Registry::GetSystem() const
 {
-    // TODO: insert return statement here
+    auto system = systems.find(std::type_index(typeid(TSystem)));
+    return *(std::static_pointer_cast<TSystem>(system->second));
 }
 
 #endif
