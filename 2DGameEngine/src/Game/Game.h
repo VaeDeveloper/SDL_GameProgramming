@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include "../ECS/ECS.h"
+#include "../AssetManager/AssetManager.h"
 
 
 const int FPS = 60;
@@ -17,7 +18,8 @@ private:
 	SDL_Renderer* renderer = nullptr;
 
 	std::unique_ptr<Registry> registry;
-	
+	std::unique_ptr<AssetManager> assetManager;
+
 public:
 	Game();
 	~Game();

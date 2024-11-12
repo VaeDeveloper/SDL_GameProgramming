@@ -14,6 +14,7 @@ Game::Game()
 {
 	isRunning = false;
 	registry = std::make_unique<Registry>();
+	assetManager = std::make_unique<AssetManager>();
 	Logger::Log("Game costructor called");
 }
 
@@ -67,16 +68,19 @@ void Game::Setup()
 	registry->AddSystem<MovementSystem>();
 	registry->AddSystem<RenderSystem>();
 
+	assetManager->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
+	assetManager->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
+
 	Entity Tank = registry->CreateEntitity();
 	Tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
 	Tank.AddComponent<RigidBodyComponent>(glm::vec2(400.0, 0.0));
-	Tank.AddComponent<SpriteComponent>(24, 35);
+	Tank.AddComponent<SpriteComponent>("tank-image", 10, 10);
 
 
-		Entity Tank2 = registry->CreateEntitity();
+	Entity Tank2 = registry->CreateEntitity();
 	Tank2.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
 	Tank2.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 133.0));
-	Tank2.AddComponent<SpriteComponent>(144, 35);
+	Tank2.AddComponent<SpriteComponent>("truck-image", 10, 50);
 }
 
 void Game::Run()
