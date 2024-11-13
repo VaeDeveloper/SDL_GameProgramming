@@ -28,17 +28,17 @@ void AssetManager::AddTexture(SDL_Renderer* renderer, const std::string &assetID
     SDL_Surface* surface = IMG_Load(filePath.c_str());
     if (!surface) 
     {
-        Logger::Err("error load image file path ");
+        Logger::Err("Error load image file path ");
         return;
     }
 
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
     if (!texture)
     {
-        Logger::Err("error from create texture surface ");
+        Logger::Err("Error from create texture surface ");
         return;
     }
-    
+
     SDL_FreeSurface(surface);
 
     textures.emplace(assetID, texture);

@@ -9,7 +9,7 @@
 #include "../Components/SpriteComponent.h"
 #include "../Systems/RenderSystem.h"
 #include "../Systems/MovementSystem.h"
-
+#include "../Systems/AnimationSystem.h"
 
 Game::Game()
 {
@@ -35,7 +35,7 @@ void Game::Initialize()
 	SDL_DisplayMode displayMode;
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 	WindowWidth = displayMode.w;
-	WindowHeight =  displayMode.h;
+	WindowHeight = displayMode.h;
 	window = SDL_CreateWindow(
 		NULL,
 		SDL_WINDOWPOS_CENTERED,
@@ -66,15 +66,17 @@ void Game::LoadLevel(int level)
 {
 	registry->AddSystem<MovementSystem>();
 	registry->AddSystem<RenderSystem>();
+	registry->AddSystem<AnimationSystem>();
 
 	assetManager->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
 	assetManager->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
+	assetManager->AddTexture(renderer, "chopper-image", "./assets/images/chopper.png");
 	assetManager->AddTexture(renderer, "tile-image", "./assets/tilemaps/jungle.png");
 
 	int tileSize = 32;
 	double tileScale = 2.0;
 	int mapNumCols = 25;
-	int mapNumRows = 20;
+	int mapNumRows = 25;
 	std::fstream mapFile;
 	mapFile.open("./assets/tilemaps/jungle.map");
 
@@ -99,11 +101,18 @@ void Game::LoadLevel(int level)
 	}
 	mapFile.close();
 
+
+	Entity chopper = registry->CreateEntitity();
+	chopper.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+	chopper.AddComponent<RigidBodyComponent>(glm::vec2(23.0, 0.0));
+	chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 3);
+	chopper.AddComponent<AnimationComponent>(2, 25, true);
+
 	Entity Tank = registry->CreateEntitity();
 	Tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
 	Tank.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 0.0));
-	Tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 3);
-
+	Tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 1);
+	
 	Entity Tank2 = registry->CreateEntitity();
 	Tank2.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
 	Tank2.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 133.0));
@@ -170,6 +179,7 @@ void Game::Update()
 	registry->Update();
 
 	registry->GetSystem<MovementSystem>().Update(deltaTime);
+	registry->GetSystem<AnimationSystem>().Update();
 
 }
 
