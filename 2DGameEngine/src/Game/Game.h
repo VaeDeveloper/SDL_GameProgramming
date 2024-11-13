@@ -24,6 +24,9 @@ public:
 	Game();
 	~Game();
 
+	void LoadLevel(int level);
+
+
 	void Initialize();
 	void Setup();	
 	void Run();
