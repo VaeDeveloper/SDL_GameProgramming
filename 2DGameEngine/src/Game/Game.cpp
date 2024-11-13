@@ -11,6 +11,7 @@
 #include "../Systems/RenderSystem.h"
 #include "../Systems/MovementSystem.h"
 #include "../Systems/AnimationSystem.h"
+#include "../Systems/CollisionSystem.h"
 
 Game::Game()
 {
@@ -68,6 +69,7 @@ void Game::LoadLevel(int level)
 	registry->AddSystem<MovementSystem>();
 	registry->AddSystem<RenderSystem>();
 	registry->AddSystem<AnimationSystem>();
+	registry->AddSystem<CollisionSystem>();
 
 	assetManager->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
 	assetManager->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
@@ -121,12 +123,12 @@ void Game::LoadLevel(int level)
 	Tank.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 0.0));
 	Tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 1);
 	Tank.AddComponent<BoxCollisionComponent>(32, 32);
-	
-	Entity Tank2 = registry->CreateEntitity();
-	Tank2.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
-	Tank2.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 133.0));
-	Tank2.AddComponent<SpriteComponent>("truck-image", 50, 50, 1);
 
+	Entity Tank2 = registry->CreateEntitity();
+	Tank2.AddComponent<TransformComponent>(glm::vec2(100.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+	Tank2.AddComponent<RigidBodyComponent>(glm::vec2(-40.0, 0.0));
+	Tank2.AddComponent<SpriteComponent>("truck-image", 50, 50, 1);
+	Tank2.AddComponent<BoxCollisionComponent>(32, 32);
 }
 
 void Game::Setup()
@@ -189,6 +191,7 @@ void Game::Update()
 
 	registry->GetSystem<MovementSystem>().Update(deltaTime);
 	registry->GetSystem<AnimationSystem>().Update();
+	registry->GetSystem<CollisionSystem>().Update();
 
 }
 
