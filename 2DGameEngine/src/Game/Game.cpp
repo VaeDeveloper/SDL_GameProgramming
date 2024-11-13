@@ -7,6 +7,7 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
 #include "../Components/SpriteComponent.h"
+#include "../Components/BoxColliderComponent.h"
 #include "../Systems/RenderSystem.h"
 #include "../Systems/MovementSystem.h"
 #include "../Systems/AnimationSystem.h"
@@ -71,12 +72,13 @@ void Game::LoadLevel(int level)
 	assetManager->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
 	assetManager->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
 	assetManager->AddTexture(renderer, "chopper-image", "./assets/images/chopper.png");
+	assetManager->AddTexture(renderer, "radar-image", "./assets/images/radar.png");
 	assetManager->AddTexture(renderer, "tile-image", "./assets/tilemaps/jungle.png");
 
 	int tileSize = 32;
 	double tileScale = 2.0;
-	int mapNumCols = 25;
-	int mapNumRows = 25;
+	int mapNumCols = 30;
+	int mapNumRows = 20;
 	std::fstream mapFile;
 	mapFile.open("./assets/tilemaps/jungle.map");
 
@@ -108,10 +110,17 @@ void Game::LoadLevel(int level)
 	chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 3);
 	chopper.AddComponent<AnimationComponent>(2, 25, true);
 
+	Entity radar = registry->CreateEntitity();
+	radar.AddComponent<TransformComponent>(glm::vec2(WindowWidth - 75.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
+	radar.AddComponent<SpriteComponent>("radar-image", 64, 64,1);
+	radar.AddComponent<AnimationComponent>(8, 8, true);
+
+
 	Entity Tank = registry->CreateEntitity();
 	Tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
 	Tank.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 0.0));
 	Tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 1);
+	Tank.AddComponent<BoxCollisionComponent>(32, 32);
 	
 	Entity Tank2 = registry->CreateEntitity();
 	Tank2.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
