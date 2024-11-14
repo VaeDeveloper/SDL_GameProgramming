@@ -13,12 +13,13 @@ class Game
 {
 private:
 	bool isRunning = false;
+	bool isDebug = true;
 	int millisecsPreviousFrame = 0;
 	SDL_Window* window = nullptr;
 	SDL_Renderer* renderer = nullptr;
 
-	std::unique_ptr<Registry> registry;
-	std::unique_ptr<AssetManager> assetManager;
+	std::unique_ptr<Registry> registry = nullptr;
+	std::unique_ptr<AssetManager> assetManager = nullptr;
 
 public:
 	Game();

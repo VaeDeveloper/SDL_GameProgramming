@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <typeindex>
 #include <memory>
+#include <deque>
 #include "../Logger/Logger.h"
 
 class Registry;
@@ -67,6 +68,10 @@ private:
      */
     int ID;
 
+    /**
+     * Unique name for the entity 
+     */
+    std::string Name;
 public:
 /**
      * Constructs an Entity with a specified ID.
@@ -74,6 +79,8 @@ public:
      * @param id The unique ID to assign to this entity.
      */
     Entity(int id) : ID(id) {}
+
+    Entity(int id ,std::string name) : ID(id), Name(name) {}
 
     /**
      * Default copy constructor.
@@ -88,6 +95,21 @@ public:
      * @return The ID of this entity.
      */
     int GetID() const;
+
+    /**
+     * 
+     */
+    std::string GetName() const { return Name; }
+
+    /**
+     * 
+     */
+    void SetName(const std::string name) { Name = name;}
+    
+    /**
+     * Kill entity function 
+     */
+    void Kill();
 
     /**
      * Default assignment operator.
@@ -157,7 +179,7 @@ public:
     virtual ~System() = default;
 
     void AddEntityToSystem(Entity entity);
-    void RemoveEntityToSystem(Entity entity);
+    void RemoveEntityFromSystem(Entity entity);
     std::vector<Entity> GetSystemEntity() const;
     const Signature& GetComponentSignature() const;
 
@@ -323,6 +345,8 @@ private:
      */
     std::set<Entity> entitiesToBeKilled;
 
+    std::deque<int> freeIDs;
+
 public:
     /**
      * Default constructor for the Registry.
@@ -345,6 +369,8 @@ public:
      * @return The newly created entity.
      */
     Entity CreateEntitity();
+
+    void KillEntity(Entity entity);
 
     /**
      * Adds an entity to the appropriate systems based on its component signature.
@@ -438,6 +464,13 @@ public:
      * @param entity The entity to add to systems.
      */
     void AddEntityToSystems(Entity entity);
+
+
+    /**
+     * Remove an entity to all relevant systems 
+     */
+    void RemoveEntityFromSystems(Entity entity);
+
 };
 
 /**

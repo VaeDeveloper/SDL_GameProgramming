@@ -61,7 +61,8 @@ public:
                 
                 if (collisionHappened)
                 {
-                    Logger::Log("Entity " + std::to_string(a.GetID()) + " is colliding entity " + std::to_string(b.GetID()));
+                    Logger::Log("Entity id " + std::to_string(a.GetID()) + " (" + a.GetName() +") " +
+                     " is colliding entity id " + std::to_string(b.GetID()) + " (" + b.GetName() + ") ");
                 }
 
             }

@@ -8,12 +8,18 @@ int Entity::GetID() const
     return ID;
 }
 
+void Entity::Kill()
+{
+    registry->KillEntity(*this);
+    Logger::Log("Kill entity - " + GetName() + " id: " + std::to_string(GetID()));
+}
+
 void System::AddEntityToSystem(Entity entity)
 {
     entities.push_back(entity);
 }
 
-void System::RemoveEntityToSystem(Entity entity)
+void System::RemoveEntityFromSystem(Entity entity)
 {
     entities.erase(std::remove_if(entities.begin(), entities.end(), [&entity](Entity other)
     {
@@ -41,26 +47,51 @@ void Registry::Update()
 
     entitiesToBeAdded.clear();
 
+    //Process entities that are waiting to be killed from the active Systems
+    for (auto entity : entitiesToBeKilled)
+    {
+        RemoveEntityFromSystems(entity);
+        entityComponentSignatures[entity.GetID()].reset();
+        
+        //make the entity id available to be reused
+        freeIDs.push_back(entity.GetID());
+    }
+
+    entitiesToBeKilled.clear();
+
 }
 
 Entity Registry::CreateEntitity()
 {
-    int entityId = numEntities++;
+    int entityId;
+
+    if (freeIDs.empty())
+    {
+        entityId = numEntities++;
+        if (entityId >= static_cast<int>(entityComponentSignatures.size()))
+        {
+            entityComponentSignatures.resize(entityId + 1);
+        }
+    }
+    else
+    {
+        entityId = freeIDs.front();
+        freeIDs.pop_front();        
+    }
 
     Entity entity(entityId);
     entity.registry= this;
-
     entitiesToBeAdded.insert(entity);
-
-    if (entityId >= static_cast<int>(entityComponentSignatures.size()))
-    {
-        entityComponentSignatures.resize(entityId + 1);
-    }
 
     Logger::Log("Entity created with id = " + std::to_string(entityId));
 
     return entity;
 
+}
+
+void Registry::KillEntity(Entity entity)
+{
+    entitiesToBeKilled.insert(entity);
 }
 
 void Registry::AddEntityToSystems(Entity entity)
@@ -77,5 +108,13 @@ void Registry::AddEntityToSystems(Entity entity)
         {
             system.second->AddEntityToSystem(entity);
         }
+    }
+}
+
+void Registry::RemoveEntityFromSystems(Entity entity)
+{
+    for (auto system : systems)
+    {
+        system.second->RemoveEntityFromSystem(entity);
     }
 }

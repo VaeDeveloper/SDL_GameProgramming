@@ -12,10 +12,12 @@
 #include "../Systems/MovementSystem.h"
 #include "../Systems/AnimationSystem.h"
 #include "../Systems/CollisionSystem.h"
+#include "../Systems/RenderColliderSystem.h"
 
 Game::Game()
 {
 	isRunning = false;
+	isDebug = true;
 	registry = std::make_unique<Registry>();
 	assetManager = std::make_unique<AssetManager>();
 	Logger::Log("Game costructor called");
@@ -70,6 +72,7 @@ void Game::LoadLevel(int level)
 	registry->AddSystem<RenderSystem>();
 	registry->AddSystem<AnimationSystem>();
 	registry->AddSystem<CollisionSystem>();
+	registry->AddSystem<RenderColliderSystem>();
 
 	assetManager->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
 	assetManager->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
@@ -107,10 +110,12 @@ void Game::LoadLevel(int level)
 
 
 	Entity chopper = registry->CreateEntitity();
+	chopper.SetName("Player chopper");
 	chopper.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
 	chopper.AddComponent<RigidBodyComponent>(glm::vec2(23.0, 0.0));
 	chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 3);
 	chopper.AddComponent<AnimationComponent>(2, 25, true);
+	chopper.AddComponent<BoxCollisionComponent>(32, 32);
 
 	Entity radar = registry->CreateEntitity();
 	radar.AddComponent<TransformComponent>(glm::vec2(WindowWidth - 75.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
@@ -119,16 +124,20 @@ void Game::LoadLevel(int level)
 
 
 	Entity Tank = registry->CreateEntitity();
+	Tank.SetName("Tank 1");
 	Tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
 	Tank.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 0.0));
 	Tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 1);
 	Tank.AddComponent<BoxCollisionComponent>(32, 32);
 
 	Entity Tank2 = registry->CreateEntitity();
+	Tank2.SetName("Tank 2");
 	Tank2.AddComponent<TransformComponent>(glm::vec2(100.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
 	Tank2.AddComponent<RigidBodyComponent>(glm::vec2(-40.0, 0.0));
 	Tank2.AddComponent<SpriteComponent>("truck-image", 50, 50, 1);
 	Tank2.AddComponent<BoxCollisionComponent>(32, 32);
+
+	Tank.Kill();
 }
 
 void Game::Setup()
@@ -167,6 +176,10 @@ void Game::ProcessInput()
 				{
 					isRunning = false;
 				}
+				if (event.key.keysym.sym == SDLK_d)
+				{
+					isDebug = !isDebug;
+				}
 				break;		
 		}
 	}
@@ -201,6 +214,12 @@ void Game::Render()
 	SDL_RenderClear(renderer);
 
 	registry->GetSystem<RenderSystem>().Update(renderer,assetManager);
+	
+	if (isDebug)
+	{
+		registry->GetSystem<RenderColliderSystem>().Update(renderer);
+	}
+
 	SDL_RenderPresent(renderer);
 
 }
