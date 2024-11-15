@@ -26,6 +26,22 @@ Vector2D Force::GenerateDragForce(const Body& Body, float k)
     return dragForce;
 }
 
+Vector2D Force::GenerateDragForce(const Particle& particle, float k) {
+    Vector2D dragForce = Vector2D(0, 0);
+    if (particle.velocity.MagnitudeSquared() > 0) {
+        // Calculate the drag direction (inverse of velocity unit vector)
+        Vector2D dragDirection = particle.velocity.UnitVector() * -1.0;
+
+        // Calculate the drag magnitude, k * |v|^2
+        float dragMagnitude = k * particle.velocity.MagnitudeSquared();
+
+        // Generate the final drag force with direction and magnitude
+        dragForce = dragDirection * dragMagnitude;
+    }
+    return dragForce;
+}
+
+
 /**
  * 
  */
@@ -109,5 +125,41 @@ Vector2D Force::GenerateSpringForce(const Body& a, const Body& b, float restLeng
 
     /* Calculate the final resulting spring force vector*/
     const Vector2D springForce = springDirection * springMagnutude;
+    return springForce;
+}
+
+Vector2D Force::GenerateSpringForce(const Particle& particle, Vector2D anchor, float restLength, float k) {
+    // Calculate the distance between the anchor and the object
+    Vector2D d = particle.position - anchor;
+
+    // Find the spring displacement considering the rest length
+    float displacement = d.Magnitude() - restLength;
+
+    // Calculate the direction of the spring force
+    Vector2D springDirection = d.UnitVector();
+
+    // Calculate the magnitude of the spring force
+    float springMagnitude = -k * displacement;
+
+    // Calculate the final resulting spring force vector
+    Vector2D springForce = springDirection * springMagnitude;
+    return springForce;
+}
+
+Vector2D Force::GenerateSpringForce(const Particle& a, const Particle& b, float restLength, float k) {
+    // Calculate the distance between the two particles
+    Vector2D d = a.position - b.position;
+
+    // Find the spring displacement considering the rest length
+    float displacement = d.Magnitude() - restLength;
+
+    // Calculate the direction of the spring force
+    Vector2D springDirection = d.UnitVector();
+
+    // Calculate the magnitude of the spring force
+    float springMagnitude = -k * displacement;
+
+    // Calculate the final resulting spring force vector
+    Vector2D springForce = springDirection * springMagnitude;
     return springForce;
 }
