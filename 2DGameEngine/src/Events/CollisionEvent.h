@@ -2,6 +2,7 @@
 #define COLLISIONEVENT_H
 
 #include "../ECS/ECS.h"
+#include "../EventBus/Event.h"
 
 class CollisionEvent : public Event
 {
@@ -10,7 +11,7 @@ public:
 	Entity b;
 
 	CollisionEvent(Entity a, Entity b) : a(a), b(b) {}
-}
+};
 
 
 #endif

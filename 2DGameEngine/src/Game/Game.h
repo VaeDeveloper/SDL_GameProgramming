@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include "../ECS/ECS.h"
 #include "../AssetManager/AssetManager.h"
+#include "../EventBus/EventBus.h"
 
 
 const int FPS = 60;
@@ -20,13 +21,13 @@ private:
 
 	std::unique_ptr<Registry> registry = nullptr;
 	std::unique_ptr<AssetManager> assetManager = nullptr;
+	std::unique_ptr<EventBus> eventBus = nullptr;
 
 public:
 	Game();
 	~Game();
 
 	void LoadLevel(int level);
-
 
 	void Initialize();
 	void Setup();	

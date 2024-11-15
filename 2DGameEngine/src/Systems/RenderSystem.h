@@ -47,9 +47,9 @@ public:
             const auto transform = entity.transformComponent;
             const auto sprite = entity.spriteComponent;
 
-            SDL_Rect srcRect = sprite.srcRect;
+            const SDL_Rect srcRect = sprite.srcRect;
 
-            SDL_Rect dstRect = 
+            const SDL_Rect dstRect = 
             {
                 static_cast<int>(transform.position.x),
                 static_cast<int>(transform.position.y),
