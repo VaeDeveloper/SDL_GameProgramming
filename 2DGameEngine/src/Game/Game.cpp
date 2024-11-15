@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <SDL2/SDL_image.h>
 
+#include "../Utilities/Utils.h"
 #include "../Logger/Logger.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
@@ -15,6 +16,8 @@
 #include "../Systems/CollisionSystem.h"
 #include "../Systems/RenderColliderSystem.h"
 #include "../Systems/DamageSystem.h"
+
+
 
 Game::Game()
 {
@@ -33,16 +36,14 @@ Game::~Game()
 
 void Game::Initialize()
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING) != 0 )
-	{
-		Logger::Err("Error initialization SDL");
-		return;
-	}
+	Logger::Log("Initialize Game engine");
+	check(SDL_Init(SDL_INIT_EVERYTHING) == 0, "Error initialize SDL.");
 	
 	SDL_DisplayMode displayMode;
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 	WindowWidth = displayMode.w;
 	WindowHeight = displayMode.h;
+
 	window = SDL_CreateWindow(
 		NULL,
 		SDL_WINDOWPOS_CENTERED,
@@ -51,18 +52,10 @@ void Game::Initialize()
 		WindowHeight,
 		SDL_WINDOW_BORDERLESS);
 
-	if (!window)
-	{
-		Logger::Err("Error creating SDL window");
-		return;
-	}
-	
+	check(window, "Error Creating SDL Window");
+
 	renderer = SDL_CreateRenderer(window, -1, 0);
-	if (!renderer)
-	{
-		Logger::Err("Error creating SDL renderer ");
-		return;
-	}
+	check(renderer, "Error Creating SDL renderer");
 	
 	SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 	isRunning = true;
