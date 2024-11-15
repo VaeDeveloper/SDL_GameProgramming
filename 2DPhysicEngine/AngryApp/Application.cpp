@@ -5,7 +5,7 @@
 #include "../Physics/Contact.h"
 #include "../Physics/Constraint.h"
 
-#define DEBUG_IFNO (0)
+#define DEBUG_IFNO 0
 
 
 /**
@@ -15,7 +15,6 @@ bool Application::IsRunning() const
 {
     return running;
 }
-
 
 /**
  *Setup function (executed once in the beginning of the simulation) 
@@ -227,7 +226,7 @@ void Application::Input()
                     int x, y;
                     SDL_GetMouseState(&x, &y);
                     Body* box = new Body(BoxShape(60, 60), x, y, 1.0);
-                    box->SetTexture("./assets/angrybirds/rock-box.png");
+                    box->SetTexture("../assets/angrybirds/rock-box.png");
                     box->angularVelocity = 0.0;
                     box->friction = 0.9;
                     world->AddBody(box);
@@ -238,7 +237,7 @@ void Application::Input()
                     int x, y;
                     SDL_GetMouseState(&x, &y);
                     Body* rock = new Body(CircleShape(30), x, y, 1.0);
-                    rock->SetTexture("./assets/angrybirds/rock-round.png");
+                    rock->SetTexture("../assets/angrybirds/rock-round.png");
                     rock->friction = 0.4;
                     world->AddBody(rock);
                 }
@@ -298,13 +297,7 @@ void Application::Update()
     float deltaTime = TimeDeductions();
 
     /* World update. */
-    world->Update(deltaTime);
-
-    /* For Debug Information for collision detetection. */
-    
-    #if DEBUG_INFO
-        world->SetDebug(debug);
-    #endif
+    world->Update(deltaTime);    
 }
 
 /** 
@@ -326,12 +319,12 @@ void Application::Render()
                 Graphics::DrawTexture(body->position.x, body->position.y, circleShape->radius * 2, circleShape->radius * 2, body->rotation, body->texture);
             }
 
-#ifdef DEBUG_INFO
+
             else if (debug)
             {
                     Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation, 0xFF0000FF);
             }
-#endif 
+ 
         }
 
         if (body->shape->GetType() == BOX)
@@ -342,12 +335,12 @@ void Application::Render()
                 Graphics::DrawTexture(body->position.x, body->position.y, boxShape->width, boxShape->height, body->rotation, body->texture);
             }
 
-#ifdef DEBUG_INFO
+
             else if (debug)
             {
                 Graphics::DrawPolygon(body->position.x, body->position.y, boxShape->worldVertices, 0xFF0000FF);
             }
-#endif
+
         }
         if (body->shape->GetType() == POLYGON)
         {
@@ -358,12 +351,12 @@ void Application::Render()
                     body->position.x, body->position.y, polygonShape->width, polygonShape->height, body->rotation, body->texture);
             }
 
-#ifdef DEBUG_INFO
+
             else if (debug)
             {
                 Graphics::DrawPolygon(body->position.x, body->position.y, polygonShape->worldVertices, 0xFF0000FF);
             }
-#endif
+
         }
     }
 
