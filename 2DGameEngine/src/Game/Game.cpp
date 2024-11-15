@@ -108,7 +108,7 @@ void Game::LoadLevel(int level)
 
 	Entity chopper = registry->CreateEntitity();
 	chopper.SetName("Player chopper");
-	chopper.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+	chopper.AddComponent<TransformComponent>(glm::vec2(200.0, 300.0), glm::vec2(1.0, 1.0), 0.0);
 	chopper.AddComponent<RigidBodyComponent>(glm::vec2(23.0, 0.0));
 	chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 3);
 	chopper.AddComponent<AnimationComponent>(2, 25, true);
@@ -129,12 +129,12 @@ void Game::LoadLevel(int level)
 
 	Entity Tank2 = registry->CreateEntitity();
 	Tank2.SetName("Tank 2");
-	Tank2.AddComponent<TransformComponent>(glm::vec2(100.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+	Tank2.AddComponent<TransformComponent>(glm::vec2(300.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
 	Tank2.AddComponent<RigidBodyComponent>(glm::vec2(-40.0, 0.0));
-	Tank2.AddComponent<SpriteComponent>("truck-image", 50, 50, 1);
+	Tank2.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);
 	Tank2.AddComponent<BoxCollisionComponent>(32, 32);
 
-	Tank.Kill();
+	
 }
 
 void Game::Setup()

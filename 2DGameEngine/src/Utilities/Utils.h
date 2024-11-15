@@ -10,7 +10,7 @@
     if (!(condition))               \
     {                               \
         Logger::Err(msg);           \
-        return;               \
+        return;                     \
     }
 
 #endif
