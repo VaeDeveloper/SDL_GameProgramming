@@ -47,6 +47,7 @@ Body::Body(const Shape& shape, float x, float y, float mass)
         this->invI = PhysicEngine::ZERO_FLOAT;
     }
     this->shape->UpdateVertices(rotation, position);
+    
     std::cout << "Body constructor called!" << std::endl;
 }
 /*----------------------------------------------------------------------------------------------------------------*/

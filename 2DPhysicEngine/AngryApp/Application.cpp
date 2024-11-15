@@ -31,7 +31,7 @@ void Application::Setup()
     world = new World(-9.8);
 
     // Load texture for the background image
-    SDL_Surface* bgSurface = IMG_Load("./assets/angrybirds/background.png");
+    SDL_Surface* bgSurface = IMG_Load("../assets/angrybirds/background.png");
     if (bgSurface)
     {
         bgTexture = SDL_CreateTextureFromSurface(Graphics::Renderer, bgSurface);
@@ -40,7 +40,7 @@ void Application::Setup()
 
     // Add bird
     Body* bird = new Body(CircleShape(45), 100, Graphics::Height() / 2.0 + 220, 3.0);
-    bird->SetTexture("./assets/angrybirds/bird-red.png");
+    bird->SetTexture("../assets/angrybirds/bird-red.png");
     world->AddBody(bird);
 
     // Add a floor and walls to contain objects objects
@@ -59,7 +59,7 @@ void Application::Setup()
     {
         const float mass = 10.0 / static_cast<float>(i);
         Body* box = new Body(BoxShape(50, 50), 600, floor->position.y - i * 55, mass);
-        box->SetTexture("./assets/angrybirds/wood-box.png");
+        box->SetTexture("../assets/angrybirds/wood-box.png");
         box->friction = 0.9;
         box->restitution = 0.1;
         world->AddBody(box);
@@ -69,9 +69,9 @@ void Application::Setup()
     Body* plank1 = new Body(BoxShape(50, 150), Graphics::Width() / 2.0 + 20, floor->position.y - 100, 5.0);
     Body* plank2 = new Body(BoxShape(50, 150), Graphics::Width() / 2.0 + 180, floor->position.y - 100, 5.0);
     Body* plank3 = new Body(BoxShape(250, 25), Graphics::Width() / 2.0 + 100.0f, floor->position.y - 200, 2.0);
-    plank1->SetTexture("./assets/angrybirds/wood-plank-solid.png");
-    plank2->SetTexture("./assets/angrybirds/wood-plank-solid.png");
-    plank3->SetTexture("./assets/angrybirds/wood-plank-cracked.png");
+    plank1->SetTexture("../assets/angrybirds/wood-plank-solid.png");
+    plank2->SetTexture("../assets/angrybirds/wood-plank-solid.png");
+    plank3->SetTexture("../assets/angrybirds/wood-plank-cracked.png");
     world->AddBody(plank1);
     world->AddBody(plank2);
     world->AddBody(plank3);
@@ -79,7 +79,7 @@ void Application::Setup()
     // Add a triangle polygon
     std::vector<Vector2D> triangleVertices = {Vector2D(30, 30), Vector2D(-30, 30), Vector2D(0, -30)};
     Body* triangle = new Body(PolygonShape(triangleVertices), plank3->position.x, plank3->position.y - 50, 0.5);
-    triangle->SetTexture("./assets/angrybirds/wood-triangle.png");
+    triangle->SetTexture("../assets/angrybirds/wood-triangle.png");
     world->AddBody(triangle);
 
     // Add a pyramid of boxes
@@ -94,7 +94,7 @@ void Application::Setup()
             Body* box = new Body(BoxShape(50, 50), x, y, mass);
             box->friction = 0.9;
             box->restitution = 0.0;
-            box->SetTexture("./assets/angrybirds/wood-box.png");
+            box->SetTexture("../assets/angrybirds/wood-box.png");
             world->AddBody(box);
         }
     }
@@ -103,7 +103,7 @@ void Application::Setup()
     const int numSteps = 10;
     const int spacing = 33;
     Body* startStep = new Body(BoxShape(80, 20), 200, 200, 0.0);
-    startStep->SetTexture("./assets/angrybirds/rock-bridge-anchor.png");
+    startStep->SetTexture("../assets/angrybirds/rock-bridge-anchor.png");
     world->AddBody(startStep);
     Body* last = floor;
 
@@ -114,7 +114,7 @@ void Application::Setup()
         const float mass = (i == numSteps) ? 0.0 : 3.0;
         
         Body* step = new Body(CircleShape(15), x, y, mass);
-        step->SetTexture("./assets/angrybirds/wood-bridge-step.png");
+        step->SetTexture("../assets/angrybirds/wood-bridge-step.png");
         world->AddBody(step);
         
         JointConstraint* joint = new JointConstraint(last, step, step->position);
@@ -124,7 +124,7 @@ void Application::Setup()
     }
 
     Body* endStep = new Body(BoxShape(80, 20), last->position.x + 60, last->position.y - 20, 0.0);
-    endStep->SetTexture("./assets/angrybirds/rock-bridge-anchor.png");
+    endStep->SetTexture("../assets/angrybirds/rock-bridge-anchor.png");
     world->AddBody(endStep);
 
     // Add pigs
@@ -132,10 +132,10 @@ void Application::Setup()
     Body* pig2 = new Body(CircleShape(30), plank2->position.x + 400, floor->position.y - 50, 3.0);
     Body* pig3 = new Body(CircleShape(30), plank2->position.x + 460, floor->position.y - 50, 3.0);
     Body* pig4 = new Body(CircleShape(30), 220, 130, 1.0);
-    pig1->SetTexture("./assets/angrybirds/pig-1.png");
-    pig2->SetTexture("./assets/angrybirds/pig-2.png");
-    pig3->SetTexture("./assets/angrybirds/pig-1.png");
-    pig4->SetTexture("./assets/angrybirds/pig-2.png");
+    pig1->SetTexture("../assets/angrybirds/pig-1.png");
+    pig2->SetTexture("../assets/angrybirds/pig-2.png");
+    pig3->SetTexture("../assets/angrybirds/pig-1.png");
+    pig4->SetTexture("../assets/angrybirds/pig-2.png");
     world->AddBody(pig1);
     world->AddBody(pig2);
     world->AddBody(pig3);
@@ -149,13 +149,13 @@ void Application::Setup()
     Body* rightArm = new Body(BoxShape(15, 70), torso->position.x + 32, torso->position.y - 10, 1.0);
     Body* leftLeg = new Body(BoxShape(20, 90), torso->position.x - 20, torso->position.y + 97, 1.0);
     Body* rightLeg = new Body(BoxShape(20, 90), torso->position.x + 20, torso->position.y + 97, 1.0);
-    bob->SetTexture("./assets/ragdoll/bob.png");
-    head->SetTexture("./assets/ragdoll/head.png");
-    torso->SetTexture("./assets/ragdoll/torso.png");
-    leftArm->SetTexture("./assets/ragdoll/leftArm.png");
-    rightArm->SetTexture("./assets/ragdoll/rightArm.png");
-    leftLeg->SetTexture("./assets/ragdoll/leftLeg.png");
-    rightLeg->SetTexture("./assets/ragdoll/rightLeg.png");
+    bob->SetTexture("../assets/ragdoll/bob.png");
+    head->SetTexture("../assets/ragdoll/head.png");
+    torso->SetTexture("../assets/ragdoll/torso.png");
+    leftArm->SetTexture("../assets/ragdoll/leftArm.png");
+    rightArm->SetTexture("../assets/ragdoll/rightArm.png");
+    leftLeg->SetTexture("../assets/ragdoll/leftLeg.png");
+    rightLeg->SetTexture("../assets/ragdoll/rightLeg.png");
     world->AddBody(bob);
     world->AddBody(head);
     world->AddBody(torso);
@@ -189,7 +189,7 @@ void Application::Setup()
     
     // Add a big static circle in the middle of the screen
     Body* bigBall = new Body(CircleShape(64), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 0.0);
-    bigBall->SetTexture("./assets/bowlingball.png");
+    bigBall->SetTexture("../assets/bowlingball.png");
     world->AddBody(bigBall);
     // Load texture for the background image
 }
