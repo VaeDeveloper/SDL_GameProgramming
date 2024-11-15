@@ -16,6 +16,7 @@
 #include "../Systems/CollisionSystem.h"
 #include "../Systems/RenderColliderSystem.h"
 #include "../Systems/DamageSystem.h"
+#include "../Systems/KeyboardControlSystem.h"
 
 
 
@@ -61,7 +62,6 @@ void Game::Initialize()
 	isRunning = true;
 }
 
-
 void Game::LoadLevel(int level)
 {
 	registry->AddSystem<MovementSystem>();
@@ -70,6 +70,7 @@ void Game::LoadLevel(int level)
 	registry->AddSystem<CollisionSystem>();
 	registry->AddSystem<RenderColliderSystem>();
 	registry->AddSystem<DamageSystem>();
+	registry->AddSystem<KeyboardControlSystem>();
 
 	assetManager->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
 	assetManager->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
@@ -164,11 +165,13 @@ void Game::ProcessInput()
 		switch(event.type)
 		{
 			case SDL_QUIT:
+			{
 				isRunning = false;
 				break;
-
+			}
 		
 			case SDL_KEYDOWN:
+			{
 				if (event.key.keysym.sym == SDLK_ESCAPE)
 				{
 					isRunning = false;
@@ -177,7 +180,12 @@ void Game::ProcessInput()
 				{
 					isDebug = !isDebug;
 				}
-				break;		
+
+				eventBus->EmitEvent<KeyPressedEvent>(event.key.keysym.sym);
+				
+				break;
+			}
+					
 		}
 	}
 }
@@ -199,7 +207,8 @@ void Game::Update()
 
 	eventBus->Reset();
 
-	registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus); 
+	registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
+	registry->GetSystem<KeyboardControlSystem>().SubscribeToEvents(eventBus);
 
 	registry->Update();
 
