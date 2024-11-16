@@ -1,2 +1,2 @@
 # SDL_GameProgramming
-This repository contains my educational projects created when I was studying the SDL library. The projects will be supported on an ongoing basis while I study programming in general. I would like to express special gratitude personally to the teacher Gustavo and his website Pikuma, which essentially gave a start to all this knowledge...
+TODO
