@@ -26,9 +26,11 @@ Vector2D Force::GenerateDragForce(const Body& Body, float k)
     return dragForce;
 }
 
-Vector2D Force::GenerateDragForce(const Particle& particle, float k) {
+Vector2D Force::GenerateDragForce(const Particle& particle, float k) 
+{
     Vector2D dragForce = Vector2D(0, 0);
-    if (particle.velocity.MagnitudeSquared() > 0) {
+    if (particle.velocity.MagnitudeSquared() > 0) 
+    {
         // Calculate the drag direction (inverse of velocity unit vector)
         Vector2D dragDirection = particle.velocity.UnitVector() * -1.0;
 

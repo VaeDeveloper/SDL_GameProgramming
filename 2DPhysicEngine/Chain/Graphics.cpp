@@ -95,7 +95,7 @@ void Graphics::DrawFillRect(int x, int y, int width, int height, Uint32 color)
 
 void Graphics::DrawPolygon(int x, int y, const std::vector<Vector2D>& vertices, Uint32 color)
 {
-    for (int i = 0; i < vertices.size(); i++)
+    for (int i = 0; i < static_cast<int>(vertices.size()); i++)
     {
         int currIndex = i;
         int nextIndex = (i + 1) % vertices.size();
@@ -109,7 +109,7 @@ void Graphics::DrawFillPolygon(int x, int y, const std::vector<Vector2D>& vertic
     std::vector<short> vx;
     std::vector<short> vy;
 
-    for (int i = 0; i < vertices.size(); i++)
+    for (int i = 0; i < static_cast<int>(vertices.size()); i++)
     {
         vx.push_back(static_cast<int>(vertices[i].x));
     }

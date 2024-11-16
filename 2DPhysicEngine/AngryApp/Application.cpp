@@ -25,9 +25,6 @@ void Application::Setup()
 
     // Create a physics world with gravity of -9.8 m/s2
     world = new World(-9.8);
-    
-    // Create a physics world with gravity of -9.8 m/s2
-    world = new World(-9.8);
 
     // Load texture for the background image
     SDL_Surface* bgSurface = IMG_Load("../assets/angrybirds/background.png");
@@ -165,14 +162,26 @@ void Application::Input()
                 break;
 
             case SDL_KEYDOWN:
-                if (event.key.keysym.sym == SDLK_ESCAPE) running = false;
-                if (event.key.keysym.sym == SDLK_d) debug = !debug;
+                if (event.key.keysym.sym == SDLK_ESCAPE) 
+                {
+                    running = false;
+                }
+                if (event.key.keysym.sym == SDLK_d) 
+                {
+                    debug = !debug;
+                }
                 if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_SPACE)
                 {
                     world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(0.0, -1110.0));
                 }
-                if (event.key.keysym.sym == SDLK_LEFT) world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(-150.0, 0.0));
-                if (event.key.keysym.sym == SDLK_RIGHT) world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(+150.0, 0.0));
+                if (event.key.keysym.sym == SDLK_LEFT) 
+                {
+                    world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(-150.0, 0.0));
+                }
+                if (event.key.keysym.sym == SDLK_RIGHT) 
+                {
+                    world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(+150.0, 0.0));
+                }
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
@@ -214,8 +223,7 @@ float Application::TimeDeductions()
     if (timeToWait > 0)
     {
         SDL_Delay(timeToWait);
-    } 
-        
+    }
 
     // Calculate the deltatime in seconds
     float deltaTime = (SDL_GetTicks() - timePreviousFrame) / 1000.0f;
@@ -227,7 +235,6 @@ float Application::TimeDeductions()
 
     // Set the time of the current frame to be used in the next one
     timePreviousFrame = SDL_GetTicks();
-
     return deltaTime;
 }
 
@@ -263,13 +270,10 @@ void Application::Render()
             {
                 Graphics::DrawTexture(body->position.x, body->position.y, circleShape->radius * 2, circleShape->radius * 2, body->rotation, body->texture);
             }
-
-
             else if (debug)
             {
-                    Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation, 0xFF0000FF);
+                Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation, 0xFF0000FF);
             }
- 
         }
 
         if (body->shape->GetType() == BOX)
@@ -279,14 +283,12 @@ void Application::Render()
             {
                 Graphics::DrawTexture(body->position.x, body->position.y, boxShape->width, boxShape->height, body->rotation, body->texture);
             }
-
-
             else if (debug)
             {
                 Graphics::DrawPolygon(body->position.x, body->position.y, boxShape->worldVertices, 0xFF0000FF);
             }
-
         }
+
         if (body->shape->GetType() == POLYGON)
         {
             PolygonShape* polygonShape = (PolygonShape*)body->shape;
@@ -295,13 +297,10 @@ void Application::Render()
                 Graphics::DrawTexture(
                     body->position.x, body->position.y, polygonShape->width, polygonShape->height, body->rotation, body->texture);
             }
-
-
             else if (debug)
             {
                 Graphics::DrawPolygon(body->position.x, body->position.y, polygonShape->worldVertices, 0xFF0000FF);
             }
-
         }
     }
 
@@ -311,10 +310,7 @@ void Application::Render()
 /**
  * Render Object implementation 
  */
-void Application::RenderObjects()
-{
-    //
-}
+void Application::RenderObjects() { /** */ }
 
 /**
  * Destroy objects implementation
