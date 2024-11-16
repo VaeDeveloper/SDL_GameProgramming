@@ -5,7 +5,7 @@
 
 /**
  * check condition isboolean return 
- */ 
+ */
 #define check(condition, msg)       \
     if (!(condition))               \
     {                               \

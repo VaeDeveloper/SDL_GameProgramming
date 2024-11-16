@@ -2,6 +2,10 @@
 
 int main(int argc, char* argv[])
 {
+	// unused params 
+	(void)argc;
+	(void)argv;
+
 	Game game;
 	
 	game.Initialize();

@@ -18,7 +18,7 @@
 #include "../Systems/DamageSystem.h"
 #include "../Systems/KeyboardControlSystem.h"
 
-
+constexpr int LevelNum = 1;
 
 Game::Game()
 {
@@ -64,6 +64,9 @@ void Game::Initialize()
 
 void Game::LoadLevel(int level)
 {
+	// unussed params , use in future 
+	(void)level;
+
 	registry->AddSystem<MovementSystem>();
 	registry->AddSystem<RenderSystem>();
 	registry->AddSystem<AnimationSystem>();
@@ -140,7 +143,7 @@ void Game::LoadLevel(int level)
 
 void Game::Setup()
 {
-	LoadLevel(1);
+	LoadLevel(LevelNum);
 }
 
 void Game::Run()
@@ -182,7 +185,6 @@ void Game::ProcessInput()
 				}
 
 				eventBus->EmitEvent<KeyPressedEvent>(event.key.keysym.sym);
-				
 				break;
 			}
 					
@@ -207,11 +209,13 @@ void Game::Update()
 
 	eventBus->Reset();
 
+	// 
 	registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 	registry->GetSystem<KeyboardControlSystem>().SubscribeToEvents(eventBus);
 
 	registry->Update();
 
+	// 
 	registry->GetSystem<MovementSystem>().Update(deltaTime);
 	registry->GetSystem<AnimationSystem>().Update();
 	registry->GetSystem<CollisionSystem>().Update(eventBus);
@@ -220,7 +224,7 @@ void Game::Update()
 
 void Game::Render()
 {
-	SDL_SetRenderDrawColor(renderer, 21, 21, 20, 255);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderClear(renderer);
 
 	registry->GetSystem<RenderSystem>().Update(renderer,assetManager);
