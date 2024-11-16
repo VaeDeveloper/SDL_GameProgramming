@@ -13,4 +13,4 @@ Hands-on SDL library experiments
 
 
 # Acknowledgements
-Special thanks to Gustavo and the Pikuma platform for foundational guidance and inspiration.
+Special thanks to Gustavo Pezzi for foundational guidance and inspiration.
