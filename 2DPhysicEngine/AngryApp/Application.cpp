@@ -42,11 +42,13 @@ void Application::Setup()
     bird->SetTexture("../assets/angrybirds/bird-red.png");
     world->AddBody(bird);
 
+
+
     // Add a floor and walls to contain objects objects
     Body* floor = new Body(BoxShape(Graphics::Width() - 50, 50), Graphics::Width() / 2.0, Graphics::Height() / 2.0 + 340, 0.0);
     Body* leftFence = new Body(BoxShape(50, Graphics::Height() - 200), 0, Graphics::Height() / 2.0 - 35, 0.0);
     Body* rightFence = new Body(BoxShape(50, Graphics::Height() - 200), Graphics::Width(), Graphics::Height() / 2.0 - 35, 0.0);
-    Body* top = new Body(BoxShape(Graphics::Width() - 50, 50), Graphics::Width() / 2.0, Graphics::Height() / 2.0 + 720, 0.0);
+    Body* top = new Body(BoxShape(Graphics::Width() + 50, 50), Graphics::Width() / 2.0, Graphics::Height() / 2.0 - 500, 0.0);
 
     world->AddBody(floor);
     world->AddBody(leftFence);
@@ -140,57 +142,11 @@ void Application::Setup()
     world->AddBody(pig3);
     world->AddBody(pig4);
 
-    //// Add ragdoll parts (rigid bodies)
-    bob = new Body(CircleShape(5), Graphics::Width() / 2.0, Graphics::Height() / 2.0 - 200, 0.0);
-    Body* head = new Body(CircleShape(25), bob->position.x, bob->position.y + 70, 5.0);
-    Body* torso = new Body(BoxShape(50, 100), head->position.x, head->position.y + 80, 3.0);
-    Body* leftArm = new Body(BoxShape(15, 70), torso->position.x - 32, torso->position.y - 10, 1.0);
-    Body* rightArm = new Body(BoxShape(15, 70), torso->position.x + 32, torso->position.y - 10, 1.0);
-    Body* leftLeg = new Body(BoxShape(20, 90), torso->position.x - 20, torso->position.y + 97, 1.0);
-    Body* rightLeg = new Body(BoxShape(20, 90), torso->position.x + 20, torso->position.y + 97, 1.0);
-    bob->SetTexture("../assets/ragdoll/bob.png");
-    head->SetTexture("../assets/ragdoll/head.png");
-    torso->SetTexture("../assets/ragdoll/torso.png");
-    leftArm->SetTexture("../assets/ragdoll/leftArm.png");
-    rightArm->SetTexture("../assets/ragdoll/rightArm.png");
-    leftLeg->SetTexture("../assets/ragdoll/leftLeg.png");
-    rightLeg->SetTexture("../assets/ragdoll/rightLeg.png");
-    world->AddBody(bob);
-    world->AddBody(head);
-    world->AddBody(torso);
-    world->AddBody(leftArm);
-    world->AddBody(rightArm);
-    world->AddBody(leftLeg);
-    world->AddBody(rightLeg);
-    
-    // Add joints between ragdoll parts (distance constraints with one anchor point)
-    JointConstraint* rightHip = new JointConstraint(torso, rightLeg, torso->position + Vector2D(+20, +50));
-    
-    //world->AddConstraint(bob);
-    //world->AddConstraint(bob);
-    //world->AddConstraint(leftShoulder);
-    //world->AddConstraint(rightShoulder);
-    //world->AddConstraint(leftHip);
-    world->AddConstraint(rightHip);
-    
 
-    // Add a floor and walls to contain objects objects
-    //Body* floor = new Body(BoxShape(Graphics::Width() - 50, 50), Graphics::Width() / 2.0, Graphics::Height() - 50, 0.0);
-    //Body* leftWall = new Body(BoxShape(50, Graphics::Height() - 100), 50, Graphics::Height() / 2.0 - 25, 0.0);
-    //Body* rightWall = new Body(BoxShape(50, Graphics::Height() - 100), Graphics::Width() - 50, Graphics::Height() / 2.0 - 25, 0.0);
-    //floor->restitution = 0.7;
-    //leftWall->restitution = 0.2;
-    //rightWall->restitution = 0.2;
-    //world->AddBody(floor);
-    //world->AddBody(leftWall);
-    //world->AddBody(rightWall);
-
-    
     // Add a big static circle in the middle of the screen
     Body* bigBall = new Body(CircleShape(64), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 0.0);
     bigBall->SetTexture("../assets/bowlingball.png");
     world->AddBody(bigBall);
-    // Load texture for the background image
 }
 
 /** 
@@ -213,11 +169,10 @@ void Application::Input()
                 if (event.key.keysym.sym == SDLK_d) debug = !debug;
                 if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_SPACE)
                 {
-
                     world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(0.0, -1110.0));
                 }
-                if (event.key.keysym.sym == SDLK_LEFT) world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(-50.0, 0.0));
-                if (event.key.keysym.sym == SDLK_RIGHT) world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(+50.0, 0.0));
+                if (event.key.keysym.sym == SDLK_LEFT) world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(-150.0, 0.0));
+                if (event.key.keysym.sym == SDLK_RIGHT) world->GetBodies()[0]->ApplyImpulseLinear(Vector2D(+150.0, 0.0));
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
@@ -242,16 +197,6 @@ void Application::Input()
                     world->AddBody(rock);
                 }
 
-                break;
-
-            case SDL_MOUSEMOTION:
-                int x, y;
-                SDL_GetMouseState(&x, &y);
-                Vector2D mouse = Vector2D(x, y);
-                Vector2D direction = (mouse - bob->position).Normalize();
-                Body* bob = world->GetBodies()[0];
-                float speed = 5.0;
-                bob->position += direction * speed;
                 break;
         }
     }

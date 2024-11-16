@@ -1,7 +1,7 @@
 #include "Graphics.h"
 #include <iostream>
 
-SDL_Window* Graphics::window = NULL;
+SDL_Window* Graphics::window = nullptr;
 SDL_Renderer* Graphics::Renderer = nullptr;
 int Graphics::windowWidth = 10;
 int Graphics::windowHeight = 10;
