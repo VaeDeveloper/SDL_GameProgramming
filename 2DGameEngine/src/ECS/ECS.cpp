@@ -1,5 +1,7 @@
 #include "ECS.h"
 #include <algorithm>
+#include "../Logger/Logger.h"
+
 
 /**
  * @brief Static member to track the next unique ID for components.

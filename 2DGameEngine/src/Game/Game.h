@@ -12,12 +12,13 @@ const int MILLISECS_PER_FRAME = 1000 / FPS;
 
 class Game
 {
-private:
 	bool isRunning = false;
 	bool isDebug = true;
 	int millisecsPreviousFrame = 0;
+
 	SDL_Window* window = nullptr;
 	SDL_Renderer* renderer = nullptr;
+	SDL_Rect camera;
 
 	std::unique_ptr<Registry> registry = nullptr;
 	std::unique_ptr<AssetManager> assetManager = nullptr;
@@ -37,8 +38,10 @@ public:
 	void Render();
 	void Destroy();
 	
-	int WindowWidth;
-	int WindowHeight;
+	static int WindowWidth;
+	static int WindowHeight;
+	static int MapWidth;
+	static int MapHeight;
 
 };
 

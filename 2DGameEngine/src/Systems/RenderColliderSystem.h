@@ -39,7 +39,7 @@ public:
      *
      * @param renderer Pointer to SDL_Renderer used for drawing the bounding boxes.
      */
-    void Update(SDL_Renderer* renderer)
+    void Update(SDL_Renderer* renderer, SDL_Rect& camera)
     {
         for (auto entity : GetSystemEntity())
         {
@@ -49,8 +49,8 @@ public:
             // Calculate collider rectangle
             const SDL_Rect colliderRect = 
             {
-                static_cast<int>(transform.position.x + collider.offset.x),
-                static_cast<int>(transform.position.y + collider.offset.y),
+                static_cast<int>(transform.position.x + collider.offset.x - camera.x),
+                static_cast<int>(transform.position.y + collider.offset.y - camera.y),
                 static_cast<int>(collider.width),
                 static_cast<int>(collider.height)
             };

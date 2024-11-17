@@ -8,6 +8,7 @@
 #include <typeindex>
 #include <memory>
 #include <deque>
+
 #include "../Logger/Logger.h"
 
 class Registry;
@@ -371,13 +372,6 @@ public:
     Entity CreateEntitity();
 
     void KillEntity(Entity entity);
-
-    /**
-     * Adds an entity to the appropriate systems based on its component signature.
-     *
-     * @param entity The entity to add to relevant systems.
-     */
-    void AddEntityToSystem(Entity entity);
 
     /** COMPONENT MANAGER */
     /**
