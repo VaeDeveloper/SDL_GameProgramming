@@ -6,7 +6,8 @@
 /**
  * Enum representing the type of log entry.
  */
-enum LogType {
+enum LogType 
+{
     LOG_INFO,      /**< Informational log entry */
     LOG_WARNING,   /**< Warning log entry */
     LOG_ERROR      /**< Error log entry */
@@ -15,15 +16,27 @@ enum LogType {
 /**
  * Struct representing a single log entry with a type and message.
  */
-struct LogEntry {
-LogType type;              /**< Type of log entry */
+struct LogEntry 
+{
+    LogType type;              /**< Type of log entry */
     std::string message;   /**< Message content of the log entry */
+
+    LogType GetType() const
+    {
+        return type;
+    }
+
+    std::string GetMessage() const 
+    {
+        return message;
+    }
 };
 
 /**
  * Logger class responsible for managing and outputting log messages.
  */
-class Logger {
+class Logger 
+{
     public:
         /**
          * Static list of all log entries recorded.
@@ -50,6 +63,13 @@ class Logger {
          * @param message The message to log as an error entry.
          */
         static void Err(const std::string& message);
+
+
+        static void SaveLogToFile();
+
+
+private:
+    static std::string filePath;
 };
 
 #endif

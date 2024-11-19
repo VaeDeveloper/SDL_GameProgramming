@@ -2,15 +2,40 @@
 #include <chrono>
 #include <ctime>
 #include <iostream>
+#include <fstream> 
+#include "../FileManager/FileManager.h"
 
 std::vector<LogEntry> Logger::messages;
+
+
+
+
+std::string Logger::filePath = "log.txt";
+
+void Logger::SaveLogToFile() 
+{
+    std::ofstream file(filePath, std::ios::trunc);  // Открытие в режиме перезаписи
+
+    if (!file.is_open()) 
+    {
+        throw std::runtime_error("Failed to open file for writing: " + filePath);
+    }
+
+    for (const auto& logEntry : messages) 
+    {
+        file << logEntry.message << std::endl;  // Каждое сообщение записывается с новой строки
+    }
+
+    file.close();
+}
 
 /**
  * Retrieves the current date and time as a formatted string.
  *
  * @return A string representing the current date and time in the format "DD-MMM-YYYY HH:MM:SS".
  */
-std::string CurrentDateTimeToString() {
+std::string CurrentDateTimeToString() 
+{
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::string output(30, '\0');
     std::strftime(&output[0], output.size(), "%d-%b-%Y %H:%M:%S", std::localtime(&now));
@@ -22,11 +47,13 @@ std::string CurrentDateTimeToString() {
  *
  * @param message The informational message to log.
  */
-void Logger::Log(const std::string& message) {
+void Logger::Log(const std::string& message) 
+{
     LogEntry logEntry;
     logEntry.type = LOG_INFO;
     logEntry.message = "LOG: [" + CurrentDateTimeToString() + "]: " + message;
     std::cout << "\x1B[32m" << logEntry.message << "\033[0m" << std::endl;
+
     messages.push_back(logEntry);
 }
 
@@ -35,11 +62,13 @@ void Logger::Log(const std::string& message) {
  *
  * @param message The warning message to log.
  */
-void Logger::Warn(const std::string& message) {
+void Logger::Warn(const std::string& message) 
+{
     LogEntry logEntry;
     logEntry.type = LOG_WARNING;
     logEntry.message = "WARN: [" + CurrentDateTimeToString() + "]: " + message;
     messages.push_back(logEntry);
+
     std::cout << "\x1B[33m" << logEntry.message << "\033[0m" << std::endl;
 }
 
@@ -48,10 +77,12 @@ void Logger::Warn(const std::string& message) {
  *
  * @param message The error message to log.
  */
-void Logger::Err(const std::string& message) {
+void Logger::Err(const std::string& message) 
+{
     LogEntry logEntry;
     logEntry.type = LOG_ERROR;
     logEntry.message = "ERR: [" + CurrentDateTimeToString() + "]: " + message;
+
     messages.push_back(logEntry);
     std::cerr << "\x1B[91m"<< logEntry.message << "\033[0m" << std::endl;
 }
