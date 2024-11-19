@@ -268,6 +268,7 @@ void Game::Render()
 
 void Game::Destroy()
 {
+	Logger::SaveLogToFile();
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
