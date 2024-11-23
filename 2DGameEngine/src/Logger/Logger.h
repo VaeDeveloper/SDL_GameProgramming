@@ -18,18 +18,8 @@ enum LogType
  */
 struct LogEntry 
 {
-    LogType type;              /**< Type of log entry */
-    std::string message;   /**< Message content of the log entry */
-
-    LogType GetType() const
-    {
-        return type;
-    }
-
-    std::string GetMessage() const 
-    {
-        return message;
-    }
+    LogType type;                /**< Type of log entry */
+    std::string message;         /**< Message content of the log entry */
 };
 
 /**
@@ -64,7 +54,9 @@ class Logger
          */
         static void Err(const std::string& message);
 
-
+        /**
+         * Static function from save log file in project  folder
+         */
         static void SaveLogToFile();
 
 
