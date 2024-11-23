@@ -369,7 +369,7 @@ public:
      *
      * @return The newly created entity.
      */
-    Entity CreateEntitity();
+    Entity CreateEntity();
 
     void KillEntity(Entity entity);
 

@@ -116,7 +116,7 @@ void Registry::Update()
  * 
  * @return Entity The newly created entity.
  */
-Entity Registry::CreateEntitity()
+Entity Regi stry::CreateEntity()
 {
     int entityId;
 
