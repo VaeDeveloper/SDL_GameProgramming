@@ -3,18 +3,17 @@
 #include <ctime>
 #include <iostream>
 #include <fstream> 
-#include "../FileManager/FileManager.h"
 
-std::vector<LogEntry> Logger::messages;
-
+ENGINE_API std::vector<LogEntry> Logger::messages;
 
 
 
-std::string Logger::filePath = "log.txt";
+/** log.txt file path from text file debug  */
+ENGINE_API std::string Logger::filePath = "log.txt";
 
-void Logger::SaveLogToFile() 
+ENGINE_API void Logger::SaveLogToFile() 
 {
-    std::ofstream file(filePath, std::ios::trunc);  // Открытие в режиме перезаписи
+    std::ofstream file(filePath, std::ios::trunc); 
 
     if (!file.is_open()) 
     {
@@ -23,7 +22,7 @@ void Logger::SaveLogToFile()
 
     for (const auto& logEntry : messages) 
     {
-        file << logEntry.message << std::endl;  // Каждое сообщение записывается с новой строки
+        file << logEntry.message << std::endl;
     }
 
     file.close();
@@ -34,7 +33,7 @@ void Logger::SaveLogToFile()
  *
  * @return A string representing the current date and time in the format "DD-MMM-YYYY HH:MM:SS".
  */
-std::string CurrentDateTimeToString() 
+ENGINE_API std::string CurrentDateTimeToString()
 {
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::string output(30, '\0');
@@ -47,7 +46,7 @@ std::string CurrentDateTimeToString()
  *
  * @param message The informational message to log.
  */
-void Logger::Log(const std::string& message) 
+ENGINE_API void Logger::Log(const std::string& message) 
 {
     LogEntry logEntry;
     logEntry.type = LOG_INFO;
@@ -62,7 +61,7 @@ void Logger::Log(const std::string& message)
  *
  * @param message The warning message to log.
  */
-void Logger::Warn(const std::string& message) 
+ENGINE_API void Logger::Warn(const std::string& message) 
 {
     LogEntry logEntry;
     logEntry.type = LOG_WARNING;
@@ -77,7 +76,7 @@ void Logger::Warn(const std::string& message)
  *
  * @param message The error message to log.
  */
-void Logger::Err(const std::string& message) 
+ENGINE_API void Logger::Err(const std::string& message) 
 {
     LogEntry logEntry;
     logEntry.type = LOG_ERROR;
