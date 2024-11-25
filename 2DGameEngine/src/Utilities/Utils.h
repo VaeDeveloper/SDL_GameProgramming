@@ -3,6 +3,17 @@
 
 #include "../Logger/Logger.h"
 
+
+
+namespace GEngine
+{
+    namespace Math
+    {
+        int randomInt(int min, int max);
+    }
+}
+
+
 /**
  * check condition isboolean return 
  */
@@ -12,5 +23,8 @@
         Logger::Err(msg);           \
         return;                     \
     }
+
+
+
 
 #endif

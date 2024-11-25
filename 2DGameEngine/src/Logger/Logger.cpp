@@ -6,8 +6,6 @@
 
 ENGINE_API std::vector<LogEntry> Logger::messages;
 
-
-
 /** log.txt file path from text file debug  */
 ENGINE_API std::string Logger::filePath = "log.txt";
 

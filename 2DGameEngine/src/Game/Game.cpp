@@ -152,7 +152,8 @@ void Game::LoadLevel(int level)
 	chopper.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
 	chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 3);
 	chopper.AddComponent<AnimationComponent>(2, 15, true);
-	chopper.AddComponent<BoxCollisionComponent>(32, 32);
+	chopper.AddComponent<ProjectileEmitterComponent>(glm::vec2(150.0, 150.0), 0, 10000, 0, true);
+	//chopper.AddComponent<BoxCollisionComponent>(32, 32);
 	chopper.AddComponent<KeyboardControlledComponent>
 	(
 		glm::vec2(0, -80), 
@@ -161,6 +162,7 @@ void Game::LoadLevel(int level)
 		glm::vec2(-80, 0)
 	);
 	chopper.AddComponent<CameraFollowComponent>();
+
 	chopper.AddComponent<HealthComponent>(100);
 
 
@@ -212,7 +214,6 @@ void Game::Run()
 		Update();
 		Render();
 	}
-
 }
 
 /**
@@ -256,7 +257,8 @@ void Game::Update()
     // If we are too fast, waste some time until we reach the MILLISECS_PER_FRAME
     int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecsPreviousFrame);
 
-    if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) {
+    if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) 
+	{
         SDL_Delay(timeToWait);
     }
 
@@ -268,13 +270,14 @@ void Game::Update()
 
 	eventBus->Reset();
 
-	// 
+	// update subscribe to event system (event bus)
 	registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 	registry->GetSystem<KeyboardControlSystem>().SubscribeToEvents(eventBus);
+	registry->GetSystem<ProjectileEmitterSystem>().SubscribeToEvents(eventBus);
 
 	registry->Update();
 
-	// 
+	// update allways system 
 	registry->GetSystem<MovementSystem>().Update(deltaTime);
 	registry->GetSystem<AnimationSystem>().Update();
 	registry->GetSystem<CollisionSystem>().Update(eventBus);
@@ -284,6 +287,9 @@ void Game::Update()
 
 }
 
+/**
+ * Render frame function 
+ */
 void Game::Render()
 {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -291,6 +297,7 @@ void Game::Render()
 
 	registry->GetSystem<RenderSystem>().Update(renderer,assetManager, camera	);
 	
+	/** debug box collision from entity */
 	if (isDebug)
 	{
 		registry->GetSystem<RenderColliderSystem>().Update(renderer, camera);
@@ -300,6 +307,9 @@ void Game::Render()
 
 }
 
+/**
+ * Destroy method
+ */
 void Game::Destroy()
 {
 	Logger::SaveLogToFile();

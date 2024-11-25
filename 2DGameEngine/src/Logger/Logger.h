@@ -3,7 +3,8 @@
 #include <vector>
 #include <string>
 
-#if defined(_WIN32)
+
+#if defined(_WIN32) || defined(_WIN64)
     #ifdef _EXPORTING
         #define ENGINE_API __declspec(dllexport)
     #elif defined(_IMPORTING)
@@ -11,15 +12,21 @@
     #else
         #define ENGINE_API
     #endif
+
 #elif defined(__linux__) || defined(__APPLE__)
     #ifdef _EXPORTING
-        #define ENGINE_API __attribute__((visibility("_engine_")))
+        #define ENGINE_API __attribute__((visibility("default")))
     #else
         #define ENGINE_API
     #endif
+
 #else
-    #define ENGINE_API
+    #error "Unsupported platform for ENGINE_API"
 #endif
+
+
+#define ALIGN(x) alignas(x)
+
 
 /**
  * Enum representing the type of log entry.
@@ -34,7 +41,7 @@ enum ENGINE_API LogType
 /**
  * Struct representing a single log entry with a type and message.
  */
-struct ENGINE_API LogEntry 
+struct ENGINE_API ALIGN(16) LogEntry 
 {
     LogType type;                /**< Type of log entry */
     std::string message;         /**< Message content of the log entry */
@@ -79,7 +86,7 @@ class ENGINE_API Logger
 
 
 private:
-    ENGINE_API  static std::string filePath;
+    ENGINE_API ALIGN(16) static std::string filePath;
 };
 
 #endif

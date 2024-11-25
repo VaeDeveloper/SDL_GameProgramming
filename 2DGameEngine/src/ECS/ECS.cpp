@@ -116,13 +116,14 @@ void Registry::Update()
  * 
  * @return Entity The newly created entity.
  */
-Entity Regi stry::CreateEntity()
+Entity Registry::CreateEntity()
 {
     int entityId;
 
     if (freeIDs.empty())
     {
         entityId = numEntities++;
+
         if (entityId >= static_cast<int>(entityComponentSignatures.size()))
         {
             entityComponentSignatures.resize(entityId + 1);
