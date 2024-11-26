@@ -9,3 +9,15 @@ int GEngine::Math::randomInt(int min, int max)
     std::uniform_int_distribution<> distribution(min, max);
     return distribution(gen);
 }
+
+std::string GEngine::Tools::Tools::getFileNameExt(std::string fileName)
+{
+    size_t pos = fileName.find_last_of('.');
+    
+    if (pos != std::string::npos)
+    {
+        reutrn fileName.substr(pos + 1);
+    }
+
+    return std::string();
+}
