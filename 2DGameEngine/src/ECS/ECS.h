@@ -13,10 +13,12 @@
 
 class Registry;
 
+
+
 /**
  * Defines the maximum number of components that can be registered.
  */
-const unsigned int MAX_COMPONENTS = 32;
+constexpr unsigned int MAX_COMPONENTS = 64;
 
 /**
  * Represents a signature, which is a bitset indicating the presence or absence of components.
@@ -58,6 +60,7 @@ public:
     }
 };
 
+
 /**
  * Represents an entity with a unique identifier.
  */
@@ -74,7 +77,7 @@ private:
      */
     std::string Name;
 public:
-/**
+    /**
      * Constructs an Entity with a specified ID.
      *
      * @param id The unique ID to assign to this entity.
@@ -111,6 +114,12 @@ public:
      * Kill entity function 
      */
     void Kill();
+
+
+    void Tag(const std::string& tag);
+    bool HasTag(const std::string& tag) const;
+    void Group(const std::string& group);
+    bool BelongsToGroup(const std::string& group) const;
 
     /**
      * Default assignment operator.
@@ -169,6 +178,7 @@ public:
     Registry* registry;
 };
 
+
 class System
 {
 private:
@@ -187,6 +197,8 @@ public:
     template<typename TComponent> 
     void RequireComponent();
 };
+
+ 
 
 /**
  * Interface representing a generic pool. Serves as a base class for typed pools.
@@ -346,6 +358,13 @@ private:
      */
     std::set<Entity> entitiesToBeKilled;
 
+
+    std::unordered_map<std::string, Entity> entityPerTag;
+    std::unordered_map<int, std::string> tagPerEntity;
+
+    std::unordered_map<std::string, std::set<Entity>> entitiesPerGroup;
+    std::unordered_map<int, std::string> groupPerEntity;
+
     std::deque<int> freeIDs;
 
 public:
@@ -371,7 +390,23 @@ public:
      */
     Entity CreateEntity();
 
+    /**
+     * Kill Entity
+     * 
+     * @param entity - entity to be kill 
+     */
     void KillEntity(Entity entity);
+
+
+    void TagEntity(Entity entity, const std::string& tag);
+    bool EntityHasTag(Entity entity, const std::string& tag) const;
+    Entity GetEntityByTag(const std::string& tag) const;
+    void RemoveEntityTag(Entity entity);
+
+    void GroupEntity(Entity entity, const std::string& group);
+    bool EntityBelongsToGroup(Entity entity, const std::string& group) const;
+    std::vector<Entity> GetEntitiesByGroup(const std::string& group) const;
+    void RemoveEntityGroup(Entity entity);
 
     /** COMPONENT MANAGER */
     /**
@@ -464,6 +499,9 @@ public:
      * Remove an entity to all relevant systems 
      */
     void RemoveEntityFromSystems(Entity entity);
+
+
+
 
 };
 
