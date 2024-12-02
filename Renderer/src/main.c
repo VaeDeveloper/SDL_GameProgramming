@@ -1,6 +1,13 @@
 
 #include "Display.h"
+#include "Vector.h"
 
+#define NPOINTS (9 * 9 * 9)
+vec3_t CubePoints[NPOINTS];
+vec2_t ProjectedPoints[NPOINTS];
+vec3_t CameraPosition = { .x = 0, .y = 0, .z = -5 };
+vec3_t CubeRotation = { .x = 0, .y = 0, .z = 0 };
+float FovFactor = 640.0f;
 bool IsRunning = false;
 
 void Setup(void)
@@ -15,6 +22,21 @@ void Setup(void)
 		WindowWidth,
 		WindowHeight
 	);
+
+	int PointsCount = 0;
+
+	for (float x = -1.0f; x <= 1.0f; x += 0.25f)
+	{
+		for (float y = -1.0f; y <= 1.0f; y += 0.25f)
+		{
+			for (float z = -1.0f; z <= 1.0f; z += 0.25f)
+			{
+				vec3_t newPoints = { .x = x, .y = y, .z = z };
+				CubePoints[PointsCount++] = newPoints;
+			}
+		}
+	}
+
 }
 
 void ProcessInput(void)
@@ -37,20 +59,57 @@ void ProcessInput(void)
 	}
 }
 
+vec2_t Project(vec3_t point)
+{
+	vec2_t projectedPoints = 
+	{
+		.x = (FovFactor * point.x) / point.z,
+		.y = (FovFactor * point.y) / point.z,
+	};
+	return projectedPoints;
+}
+
+
+
+
 void Update(void)
 {
+	CubeRotation.x += 0.01;
+	CubeRotation.y += 0.01;
+	CubeRotation.z += 0.01;
 
+	for (int i = 0; i < NPOINTS; i++)
+	{
+		vec3_t point = CubePoints[i];
+
+		vec3_t transformedPoint = Vec3RotateX(point, CubeRotation.x);
+		transformedPoint = Vec3RotateY(transformedPoint, CubeRotation.y);
+		transformedPoint = Vec3RotateZ(transformedPoint, CubeRotation.z);
+
+		transformedPoint.z -= CameraPosition.z;
+
+		vec2_t projectedPoints = Project(transformedPoint);
+
+		ProjectedPoints[i] = projectedPoints;
+	}
 }
 
 void Render(void)
 {
-	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
-	SDL_RenderClear(Renderer);
-
 	DrawDebugGrid();
 
-	DrawPixel(100, 100, 0xFFFF00FF);
-	DrawRect(300, 200, 300, 150, 0xFFFF00FF);
+	for (int i = 0; i < NPOINTS; i++)
+	{
+		vec2_t projPoint = ProjectedPoints[i];
+		DrawRect
+		(
+			projPoint.x + (WindowWidth / 2),
+			projPoint.y + (WindowHeight / 2),
+			4,
+			4,
+			0xFFFFFF00
+		);
+	}
 
 	RenderColorBuffer();
 	ClearColorBuffer(0xFF000000);

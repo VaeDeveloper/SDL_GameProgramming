@@ -1,7 +1,6 @@
 #include "Display.h"
 #include <stdio.h>
 
-
 SDL_Window* Window = NULL;
 SDL_Renderer* Renderer = NULL;
 SDL_Texture* ColorBufferTexture = NULL;
@@ -79,7 +78,7 @@ void DrawDebugGrid(void)
 
 void DrawPixel(int x, int y, uint32_t color)
 {
-    if (x < WindowWidth && y < WindowHeight)
+    if (x >= 0 && x < WindowWidth && y >= 0 && y < WindowHeight)
     {
         ColorBuffer[(WindowWidth * y) + x] = color;
     }
@@ -93,7 +92,7 @@ void DrawRect(int x, int y, int width, int height, uint32_t color)
         {
             int currentX = x + i;
             int currentY = y + j;
-            ColorBuffer[(WindowWidth * currentY) + currentX] = color;
+            DrawPixel(currentX, currentY, color);
         }
     }
 }
