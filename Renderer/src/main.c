@@ -8,6 +8,7 @@ vec2_t ProjectedPoints[NPOINTS];
 vec3_t CameraPosition = { .x = 0, .y = 0, .z = -5 };
 vec3_t CubeRotation = { .x = 0, .y = 0, .z = 0 };
 float FovFactor = 640.0f;
+int PreviousFrameTime = 0;
 bool IsRunning = false;
 
 void Setup(void)
@@ -74,6 +75,9 @@ vec2_t Project(vec3_t point)
 
 void Update(void)
 {
+	while (!SDL_TICKS_PASSED(SDL_GetTicks(), PreviousFrameTime + FRAME_TARGET_TIME));
+	PreviousFrameTime = SDL_GetTicks();
+
 	CubeRotation.x += 0.01;
 	CubeRotation.y += 0.01;
 	CubeRotation.z += 0.01;
