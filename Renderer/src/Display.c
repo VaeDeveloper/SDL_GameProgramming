@@ -84,6 +84,56 @@ void DrawPixel(int x, int y, uint32_t color)
     }
 }
 
+void DrawLine(int x0, int y0, int x1, int y1, uint32_t color)
+{
+	const int deltaX = (x1 - x0);
+    const int deltaY = (y1 - y0);
+
+    const int longestSideLength = (abs(deltaX) >= abs(deltaY)) ?               //
+                                abs(deltaX) : abs(deltaY);  //
+
+
+    const float xIncrement = (float)deltaX / (float)longestSideLength;
+    const float yIncrement = (float)deltaY / (float)longestSideLength;
+
+    float currentX = (float)x0;
+    float currentY = (float)y0;
+
+    for (int i = 0; i < longestSideLength; i++)
+    {
+        DrawPixel((int)round(currentX), (int)round(currentY), color);
+        currentX += xIncrement;
+        currentY += yIncrement;
+    }
+}
+
+void BresenhamLine(int x0, int y0, int x1, int y1, uint32_t color)
+{
+	const int dx = abs(x1 - x0);
+    const int dy = abs(y1 - y0);
+    const int sx = (x0 < x1) ? 1 : -1;
+    const int sy = (y0 < y1) ? 1 : -1;
+    int err = dx - dy;
+
+    while (true)
+    {
+        DrawPixel(x0, y0, color);
+
+        if (x0 == x1 && y0 == y1) break;
+        int e2 = 2 * err;
+        if (e2 > -dy)
+        {
+            err -= dy;
+            x0 += sx;
+        }
+        if (e2 < dx)
+        {
+            err += dx;
+            y0 += sy;
+        }
+    }
+}
+
 void DrawRect(int x, int y, int width, int height, uint32_t color)
 {
     for (int i = 0; i < width; i++)
@@ -95,6 +145,13 @@ void DrawRect(int x, int y, int width, int height, uint32_t color)
             DrawPixel(currentX, currentY, color);
         }
     }
+}
+
+void DrawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t color)
+{
+	DrawLine(x0, y0, x1, y1, color);
+	DrawLine(x1, y1, x2, y2, color);
+	DrawLine(x2, y2, x0, y0, color);
 }
 
 void RenderColorBuffer(void)
