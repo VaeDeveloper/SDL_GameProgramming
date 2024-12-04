@@ -57,9 +57,6 @@ vec2_t Project(vec3_t point)
 	return projectedPoints;
 }
 
-
-
-
 void Update(void)
 {
 	while (!SDL_TICKS_PASSED(SDL_GetTicks(), PreviousFrameTime + FRAME_TARGET_TIME));
