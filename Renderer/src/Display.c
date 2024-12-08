@@ -1,14 +1,16 @@
 #include "Display.h"
 #include <stdio.h>
 
-SDL_Window* Window = NULL;
-SDL_Renderer* Renderer = NULL;
-SDL_Texture* ColorBufferTexture = NULL;
-uint32_t* ColorBuffer = NULL;
-int WindowWidth = 800;
-int WindowHeight = 600;
+#define BRESENHAM_ALGO 0
 
-bool InitializeWindow(void)
+SDL_Window* _window = NULL;
+SDL_Renderer* _renderer = NULL;
+SDL_Texture* _color_buffer_texture = NULL;
+uint32_t* _color_buffer = NULL;
+int window_width = 800;
+int window_height = 600;
+
+bool initialize_window(void)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
@@ -16,75 +18,75 @@ bool InitializeWindow(void)
 		return false;
 	}
 
-	SDL_DisplayMode DisplayMode;
-	SDL_GetCurrentDisplayMode(0, &DisplayMode);
-	WindowWidth = DisplayMode.w;
-	WindowHeight = DisplayMode.h;
+	SDL_DisplayMode display_mode;
+	SDL_GetCurrentDisplayMode(0, &display_mode);
+	window_width = display_mode.w;
+	window_height = display_mode.h;
 
-	Window = SDL_CreateWindow
+	_window = SDL_CreateWindow
 	(
 		NULL,
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		WindowWidth,
-		WindowHeight,
+		window_width,
+		window_height,
 		SDL_WINDOW_BORDERLESS
 	);
 
-	if (!Window)
+	if (!_window)
 	{
 		fprintf(stderr, "Error creating SDL window");
 		return false;
 	}
 
-	Renderer = SDL_CreateRenderer(Window, -1, 0);
+	_renderer = SDL_CreateRenderer(_window, -1, 0);
 
-	if (!Renderer) 
+	if (!_renderer) 
 	{
 		fprintf(stderr, "Error createing SDL renderer");
 		return false;
 	}
 
-	SDL_SetWindowFullscreen(Window, SDL_WINDOW_FULLSCREEN);
+	SDL_SetWindowFullscreen(_window, SDL_WINDOW_FULLSCREEN);
 
 
 	return true;
 }
 
-void ClearColorBuffer(uint32_t color)
+void clear_color_buffer(uint32_t color)
 {
-	for(int y = 0; y < WindowHeight; y++)
+	for(int y = 0; y < window_height; y++)
 	{
-		for (int x = 0; x < WindowWidth; x++)
+		for (int x = 0; x < window_width; x++)
 		{
-			ColorBuffer[(WindowWidth * y) + x] = color;
+			_color_buffer[(window_width * y) + x] = color;
 		}
 	}
 }
 
-void DrawDebugGrid(void)
+void draw_debug_grid(void)
 {
-	for (int y = 0; y < WindowHeight; y += 10)
+	for (int y = 0; y < window_height; y += 10)
 	{
-		for (int x = 0; x < WindowWidth; x += 10)
+		for (int x = 0; x < window_width; x += 10)
 		{
 			if(x % 10 == 0 || y % 10 == 0)
 			{
-				ColorBuffer[(WindowWidth * y) + x]  = 0xFF333333;
+				_color_buffer[(window_width * y) + x]  = 0xFF333333;
 			}
 		}
 	}
 }
 
-void DrawPixel(int x, int y, uint32_t color)
+void draw_pixel(int x, int y, uint32_t color)
 {
-    if (x >= 0 && x < WindowWidth && y >= 0 && y < WindowHeight)
+    if (x >= 0 && x < window_width && y >= 0 && y < window_height)
     {
-        ColorBuffer[(WindowWidth * y) + x] = color;
+        _color_buffer[(window_width * y) + x] = color;
     }
 }
 
-void DrawLine(int x0, int y0, int x1, int y1, uint32_t color)
+void draw_line(int x0, int y0, int x1, int y1, uint32_t color)
 {
 	const int deltaX = (x1 - x0);
     const int deltaY = (y1 - y0);
@@ -101,13 +103,13 @@ void DrawLine(int x0, int y0, int x1, int y1, uint32_t color)
 
     for (int i = 0; i < longestSideLength; i++)
     {
-        DrawPixel((int)round(currentX), (int)round(currentY), color);
+        draw_pixel((int)round(currentX), (int)round(currentY), color);
         currentX += xIncrement;
         currentY += yIncrement;
     }
 }
 
-void BresenhamLine(int x0, int y0, int x1, int y1, uint32_t color)
+void brensenham_line(int x0, int y0, int x1, int y1, uint32_t color)
 {
 	const int dx = abs(x1 - x0);
     const int dy = abs(y1 - y0);
@@ -117,10 +119,13 @@ void BresenhamLine(int x0, int y0, int x1, int y1, uint32_t color)
 
     while (true)
     {
-        DrawPixel(x0, y0, color);
+        draw_pixel(x0, y0, color);
 
-        if (x0 == x1 && y0 == y1) break;
+        if (x0 == x1 && y0 == y1) 
+			break;
+
         int e2 = 2 * err;
+
         if (e2 > -dy)
         {
             err -= dy;
@@ -134,7 +139,7 @@ void BresenhamLine(int x0, int y0, int x1, int y1, uint32_t color)
     }
 }
 
-void DrawRect(int x, int y, int width, int height, uint32_t color)
+void draw_rect(int x, int y, int width, int height, uint32_t color)
 {
     for (int i = 0; i < width; i++)
     {
@@ -142,36 +147,41 @@ void DrawRect(int x, int y, int width, int height, uint32_t color)
         {
             int currentX = x + i;
             int currentY = y + j;
-            DrawPixel(currentX, currentY, color);
+            draw_pixel(currentX, currentY, color);
         }
     }
 }
 
-void DrawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t color)
+void draw_triangle(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t color)
 {
-	DrawLine(x0, y0, x1, y1, color);
-	DrawLine(x1, y1, x2, y2, color);
-	DrawLine(x2, y2, x0, y0, color);
+#if BRESENHAM_ALGO
+	brensenham_line(x0, y0, x1, y1, color);
+	brensenham_line(x1, y1, x2, y2, color);
+	brensenham_line(x2, y2, x0, y0, color);
+#else
+	draw_line(x0, y0, x1, y1, color);
+	draw_line(x1, y1, x2, y2, color);
+	draw_line(x2, y2, x0, y0, color);
+#endif
 }
 
-void RenderColorBuffer(void)
+void render_color_buffer(void)
 {
 	SDL_UpdateTexture
 	(
-		ColorBufferTexture,
+		_color_buffer_texture,
 		NULL,
-		ColorBuffer,
-		(int)(WindowWidth * sizeof(uint32_t))
+		_color_buffer,
+		(int)(window_width * sizeof(uint32_t))
 	);
 
-	SDL_RenderCopy(Renderer, ColorBufferTexture, NULL, NULL);
+	SDL_RenderCopy(_renderer, _color_buffer_texture, NULL, NULL);
 
 }
 
-void DestroyWindow(void)
+void destroy_window(void)
 {
-	free(ColorBuffer);
-	SDL_DestroyRenderer(Renderer);
-	SDL_DestroyWindow(Window);
+	SDL_DestroyRenderer(_renderer);
+	SDL_DestroyWindow(_window);
 	SDL_Quit();
 }
