@@ -8,6 +8,8 @@
 #define FPS 30
 #define FRAME_TARGET_TIME (1000 / FPS)
 
+
+
 extern SDL_Window* _window;
 extern SDL_Renderer* _renderer;
 extern SDL_Texture* _color_buffer_texture;

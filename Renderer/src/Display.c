@@ -1,7 +1,7 @@
 #include "Display.h"
 #include <stdio.h>
 
-#define BRESENHAM_ALGO 0
+#define BRESENHAM_ALGO 1
 
 SDL_Window* _window = NULL;
 SDL_Renderer* _renderer = NULL;
