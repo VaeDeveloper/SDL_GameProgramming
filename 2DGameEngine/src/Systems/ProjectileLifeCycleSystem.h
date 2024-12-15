@@ -31,7 +31,7 @@ public:
             
             if (SDL_GetTicks() - static_cast<Uint32>(projectile.startTime) > static_cast<Uint32>(projectile.duration))
             {
-                // entity.Kill();
+                entity.Kill();
             }
         }
     }

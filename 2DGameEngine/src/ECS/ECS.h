@@ -206,7 +206,8 @@ public:
 class IPool
 {
 public:
-    virtual ~IPool() {}
+    virtual ~IPool() = default;
+    virtual void RemoveEntityFromPool(int entityId) = 0;
 
 };
 
@@ -223,6 +224,11 @@ private:
      * A vector to store the objects in the pool.
      */
     std::vector<T> data;
+    int size;
+
+    /** Helper maps to keep track of entity ids per index, so the vector is always packed */
+    std::unordered_map<int, int> entityIdToIndex;
+    std::unordered_map<int, int> indexToEntityId;   
 
 public:
     /**
@@ -230,9 +236,10 @@ public:
      *
      * @param size The initial size of the pool. Defaults to 100.
      */
-    Pool(int size = 100)
+    Pool(int capacity = 100)
     {
-        data.resize(size);
+        size = 0;
+        data.resize(capacity);
     }
 
     /**
@@ -247,7 +254,7 @@ public:
      */
     bool IsEmpty() const
     {
-        return data.empty();
+        return size == 0;
     }
 
     /**
@@ -257,7 +264,7 @@ public:
      */
     int GetSize() const
     {
-        return data.size();
+        return size;
     }
 
     /**
@@ -265,9 +272,9 @@ public:
      *
      * @param size The new size of the pool.
      */
-    void Resize(int size)
+    void Resize(int n)
     {
-        data.resize(size);
+        data.resize(n); 
     }
 
     /**
@@ -276,6 +283,7 @@ public:
     void Clear()
     {
         data.clear();
+        size = 0;
     }
 
     /**
@@ -294,9 +302,41 @@ public:
      * @param index The index at which to set the object.
      * @param object The object to set at the specified index.
      */
-    void Set(int index, T object)
+    void Set(int entityId, T object)
     {
-        data[index] = object;
+        if (entityIdToIndex.find(entityId) != entityIdToIndex.end())
+        {
+            int index = entityIdToIndex[entityId];
+            data[index] = object;
+        }
+        else
+        {
+            int index = size;
+            entityIdToIndex.emplace(entityId, index);
+            indexToEntityId.emplace(index, entityId);
+            if (index >= static_cast<int>(data.capacity()))
+            {
+                data.resize(size * 2);
+            }
+            data[index] = object;
+            size++;
+        }
+    }
+
+    void Remove(int entityId)
+    {
+        int indexOfRemove = entityIdToIndex[entityId];
+        int indexOfLast = size - 1;
+        data[indexOfRemove] = data[indexOfLast];
+
+        int entityIdOfLastElement = indexToEntityId[indexOfLast];
+        entityIdToIndex[entityIdOfLastElement] = indexOfRemove;
+        indexToEntityId[indexOfRemove] = entityIdOfLastElement;
+
+        entityIdToIndex.erase(entityId);
+        indexToEntityId.erase(indexOfLast);
+
+        size--;
     }
 
     /**
@@ -305,10 +345,20 @@ public:
      * @param index The index of the object to retrieve.
      * @return A reference to the object at the specified index.
      */
-    T& Get(int index) 
+    T& Get(int entityId) 
     {
+        int index = entityIdToIndex[entityId];
         return static_cast<T&>(data[index]);
     }
+
+    virtual void RemoveEntityFromPool(int entityId) override
+    {
+        if (entityIdToIndex.find(entityId) != entityIdToIndex.end())
+        {
+            Remove(entityId);
+        }
+    }
+
 
     /**
      * Provides array-style access to the pool.
@@ -546,11 +596,6 @@ inline void Registry::AddComponent(Entity entity, TArgs &&...args)
 
     std::shared_ptr<Pool<TComponent>> componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentID]);
 
-    if (entityID >= componentPool->GetSize())
-    {
-        componentPool->Resize(numEntities);
-    }
-
     TComponent newComponent(std::forward<TArgs>(args)...);
 
     componentPool->Set(entityID, newComponent);
@@ -570,8 +615,11 @@ inline void Registry::RemoveComponent(Entity entity)
 {
     const auto componentID = Component<TComponent>::GetID();
     const auto entityID = entity.GetID();
-    entityComponentSignatures[entityID].set(componentID, false);
 
+    std::shared_ptr<Pool<TComponent>> componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentID]);
+    componentPool->Remove(entityID);
+
+    entityComponentSignatures[entityID].set(componentID, false);
     Logger::Log("Component id = " + std::to_string(componentID) + " was remove from entity id " + std::to_string(entityID));
 }
 

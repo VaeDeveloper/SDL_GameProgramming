@@ -60,9 +60,10 @@ class ProjectileEmitterSystem: public System
                         if (rigidbody.velocity.y < 0) directionY = -1;
                         projectileVelocity.x = projectileEmitter.projectileVelocity.x * directionX;
                         projectileVelocity.y = projectileEmitter.projectileVelocity.y * directionY;
+
                         // Create new projectile entity and add it to the world
                         Entity projectile = entity.registry->CreateEntity();
-                        //projectile.Group("projectiles");
+                        projectile.Group("projectiles");
                         projectile.AddComponent<TransformComponent>(projectilePosition, glm::vec2(1.0, 1.0), 0.0);
                         projectile.AddComponent<RigidBodyComponent>(projectileVelocity);
                         projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, 4);
@@ -73,17 +74,15 @@ class ProjectileEmitterSystem: public System
             }
         }
         
-        void Update(std::unique_ptr<Registry>& registry) {
+        void Update(std::unique_ptr<Registry>& registry)
+        {
             for (auto entity: GetSystemEntity()) 
             {
                 auto& projectileEmitter = entity.GetComponent<ProjectileEmitterComponent>();
                 const auto transform = entity.GetComponent<TransformComponent>();
 
                 // If emission frequency is zero, bypass re-emission logic
-                if (projectileEmitter.repeatFrequency == 0) 
-                {
-                    continue;
-                }
+                if (projectileEmitter.repeatFrequency == 0) continue;
 
                 // Check if its time to re-emit a new projectile
                 if (SDL_GetTicks() - static_cast<Uint32>(projectileEmitter.lastEmissionTime) > static_cast<Uint32>(projectileEmitter.repeatFrequency))

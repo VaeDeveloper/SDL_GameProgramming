@@ -119,6 +119,14 @@ void Registry::Update()
     {
         RemoveEntityFromSystems(entity);
         entityComponentSignatures[entity.GetID()].reset();
+
+        for (auto pool : componentPools)
+        {
+            if (pool)
+            {
+                pool->RemoveEntityFromPool(entity.GetID());
+            }
+        }
         
         //make the entity id available to be reused
         freeIDs.push_back(entity.GetID());
@@ -220,6 +228,10 @@ void Registry::GroupEntity(Entity entity, const std::string &group)
 
 bool Registry::EntityBelongsToGroup(Entity entity, const std::string& group) const
 {
+    if (entitiesPerGroup.find(group) == entitiesPerGroup.end())
+    {
+        return false;
+    }
     auto groupEntities = entitiesPerGroup.at(group);
     return groupEntities.find(entity.GetID()) != groupEntities.end();
 }
