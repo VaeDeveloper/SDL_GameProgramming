@@ -37,8 +37,14 @@ void AssetManager::ClearAssets()
     {
         SDL_DestroyTexture(texture.second); // Release the SDL_Texture from memory.
     }
+    textures.clear();   // Clear the map of all stored textures.
 
-    textures.clear(); // Clear the map of all stored textures.
+    for (auto font : fonts)
+    {
+        TTF_CloseFont(font.second);
+    }
+    fonts.clear();      // Clear the map of all stored fonts
+
 }
 
 /**
@@ -90,4 +96,14 @@ void AssetManager::AddTexture(SDL_Renderer* renderer, const std::string &assetID
 SDL_Texture* AssetManager::GetTexture(const std::string &assetID) 
 {
     return textures[assetID]; // Access the texture from the map by its asset ID.
+}
+
+void AssetManager::AddFont(const std::string &assetID, const std::string &filePath, int fontSize)
+{
+    fonts.emplace(assetID, TTF_OpenFont(filePath.c_str(), fontSize));
+}
+
+TTF_Font* AssetManager::GetFont(const std::string &assetID)
+{
+    return fonts[assetID];  
 }
