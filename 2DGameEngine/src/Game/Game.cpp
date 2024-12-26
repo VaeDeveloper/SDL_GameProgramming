@@ -26,6 +26,13 @@
 #include "../Systems/ProjectileEmitterSystem.h"
 #include "../Systems/ProjectileLifeCycleSystem.h"
 #include "../Systems/RenderTextSystem.h"
+#include "../Systems/RenderHealthBarSystem.h"
+#include "../Systems/RenderGUISystem.h"
+
+
+#include <imgui/imgui_impl_sdl.h>
+
+
 #include "../Utilities/Macro.h"
 
 constexpr int LevelNum = 1;
@@ -35,6 +42,7 @@ int Game::WindowHeight;
 int Game::MapHeight;
 int Game::MapWidth;
 
+bool Game::isEditMode = false;
 /**
  * 
  */
@@ -83,6 +91,11 @@ void Game::Initialize()
 	renderer = SDL_CreateRenderer(window, -1, 0);
 	check(renderer, "Error Creating SDL renderer");
 
+	// imgui context 
+	ImGui::CreateContext();
+	ImGuiSDL::Initialize(renderer, WindowWidth, WindowHeight);
+
+
 	//initialize the camera
 	camera.x = 0;
 	camera.y = 0;
@@ -101,6 +114,7 @@ void Game::LoadLevel(int level)
 	// unussed params , use in future 
 	(void)level;
 
+	// registry logic 
 	registry->AddSystem<MovementSystem>();
 	registry->AddSystem<RenderSystem>();
 	registry->AddSystem<AnimationSystem>();
@@ -112,16 +126,24 @@ void Game::LoadLevel(int level)
 	registry->AddSystem<ProjectileEmitterSystem>();
 	registry->AddSystem<ProjectileLifeCycleSystem>();
 	registry->AddSystem<RenderTextSystem>();
+	registry->AddSystem<RenderHealthBarSystem>();
+	registry->AddSystem<RenderGUISystem>();
 
+	// AssetManager logic 
 	assetManager->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
 	assetManager->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
 	assetManager->AddTexture(renderer, "chopper-image", "./assets/images/chopper-spritesheet.png");
 	assetManager->AddTexture(renderer, "radar-image", "./assets/images/radar.png");
 	assetManager->AddTexture(renderer, "tile-image", "./assets/tilemaps/jungle.png");
 	assetManager->AddTexture(renderer, "bullet-image", "./assets/images/bullet.png");
+	assetManager->AddTexture(renderer, "tree-image", "./assets/images/tree.png");
+
 	assetManager->AddFont("charriot-font", "./assets/fonts/charriot.ttf", 14);
-	
-	int tileSize = 32;
+	assetManager->AddFont("pico8-font-5", "./assets/fonts/pico8.ttf", 5);
+	assetManager->AddFont("pico8-font-10", "./assets/fonts/pico8.ttf", 10);
+
+
+	int tileSize = 32;	
 	double tileScale = 2.0;
 	int mapNumCols = 60;
 	int mapNumRows = 40;
@@ -170,20 +192,17 @@ void Game::LoadLevel(int level)
 		glm::vec2(-50, 0)
 	);
 	chopper.AddComponent<CameraFollowComponent>();
-	chopper.AddComponent<HealthComponent>(1000);
-
+	chopper.AddComponent<HealthComponent>(100);
 
 	Entity radar = registry->CreateEntity();
 	radar.AddComponent<TransformComponent>(glm::vec2(WindowWidth - 75.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
 	radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 1, true);
 	radar.AddComponent<AnimationComponent>(8, 8, true);
 	
-
-
     Entity tank = registry->CreateEntity();
 	tank.Group("enemies");
     tank.AddComponent<TransformComponent>(glm::vec2(500.0,500.0), glm::vec2(1.0, 1.0), 0.0);
-    tank.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
+    tank.AddComponent<RigidBodyComponent>(glm::vec2(20.0, 0.0));
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 1);
     tank.AddComponent<BoxCollisionComponent>(32, 32);
     tank.AddComponent<ProjectileEmitterComponent>(glm::vec2(100.0, 0.0), 5000, 3000, 10, false);
@@ -197,6 +216,19 @@ void Game::LoadLevel(int level)
     truck.AddComponent<BoxCollisionComponent>(32, 32);
     truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0.0, -200.0), 2000, 5000, 10, false);
     truck.AddComponent<HealthComponent>(100);
+
+	Entity treeA = registry->CreateEntity();
+	treeA.Group("obstacles");
+    treeA.AddComponent<TransformComponent>(glm::vec2(600.0,495.0), glm::vec2(1.0, 1.0), 0.0);
+	treeA.AddComponent<SpriteComponent>("tree-image", 16, 32, 2);
+	treeA.AddComponent<BoxCollisionComponent>(16, 32);
+
+	Entity treeB = registry->CreateEntity();
+	treeB.Group("obstacles");
+    treeB.AddComponent<TransformComponent>(glm::vec2(400.0,495.0), glm::vec2(1.0, 1.0), 0.0);
+	treeB.AddComponent<SpriteComponent>("tree-image", 16, 32, 2);
+	treeB.AddComponent<BoxCollisionComponent>(16, 32);
+
 
 	Entity label = registry->CreateEntity();
 	SDL_Color color {0, 255, 0, 255};
@@ -221,8 +253,18 @@ void Game::Run()
 	while(isRunning)
 	{
 		ProcessInput();
-		Update();
+
+		if (!isEditMode)
+		{
+			Update();
+		}
+
 		Render();
+
+		if (isEditMode)
+		{
+			registry->GetSystem<RenderGUISystem>().Update(registry);
+		}
 	}
 }
 
@@ -235,6 +277,15 @@ void Game::ProcessInput()
 	
 	while(SDL_PollEvent(&event))
 	{
+		ImGui_ImplSDL2_ProcessEvent(&event);
+		ImGuiIO& io = ImGui::GetIO();
+
+		int mouseX, mouseY;
+		const int buttons = SDL_GetMouseState(&mouseX, &mouseY);
+		io.MousePos = ImVec2(mouseX, mouseY);
+		io.MouseDown[0] = buttons & SDL_BUTTON(SDL_BUTTON_LEFT);
+		io.MouseDown[1] = buttons & SDL_BUTTON(SDL_BUTTON_RIGHT);
+
 		switch(event.type)
 		{
 			case SDL_QUIT:
@@ -252,6 +303,10 @@ void Game::ProcessInput()
 				if (event.key.keysym.sym == SDLK_d)
 				{
 					isDebug = !isDebug;
+				}
+				if (event.key.keysym.sym == SDLK_p)
+				{
+					isEditMode = !isEditMode;
 				}
 
 				eventBus->EmitEvent<KeyPressedEvent>(event.key.keysym.sym);
@@ -281,6 +336,7 @@ void Game::Update()
 	eventBus->Reset();
 
 	// update subscribe to event system (event bus)
+	registry->GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
 	registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 	registry->GetSystem<KeyboardControlSystem>().SubscribeToEvents(eventBus);
 	registry->GetSystem<ProjectileEmitterSystem>().SubscribeToEvents(eventBus);
@@ -307,11 +363,13 @@ void Game::Render()
 
 	registry->GetSystem<RenderSystem>().Update(renderer,assetManager, camera);
 	registry->GetSystem<RenderTextSystem>().Update(renderer, assetManager, camera);
+	registry->GetSystem<RenderHealthBarSystem>().Update(renderer, assetManager, camera);
 	
 	/** debug box collision from entity */
 	if (isDebug)
 	{
 		registry->GetSystem<RenderColliderSystem>().Update(renderer, camera);
+		registry->GetSystem<RenderGUISystem>().Update(registry);
 	}
 
 	SDL_RenderPresent(renderer);
@@ -324,6 +382,8 @@ void Game::Render()
 void Game::Destroy()
 {
 	Logger::SaveLogToFile();
+	ImGuiSDL::Deinitialize();
+	ImGui::DestroyContext();
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();

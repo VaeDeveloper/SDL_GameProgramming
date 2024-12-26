@@ -12,6 +12,7 @@ const int MILLISECS_PER_FRAME = 1000 / FPS;
 
 class Game
 {
+	
 	bool isRunning = false;
 	bool isDebug = false;
 	int millisecsPreviousFrame = 0;
@@ -38,6 +39,7 @@ public:
 	void Render();
 	void Destroy();
 	
+	static bool isEditMode;
 	static int WindowWidth;
 	static int WindowHeight;
 	static int MapWidth;
