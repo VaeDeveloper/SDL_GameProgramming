@@ -118,6 +118,51 @@ void LevelLoader::LoadLevel(sol::state& lua, SDL_Renderer *renderer, const std::
 			break;
 		}
 
+		sol::table entity = entities[i];
+		Entity newEntity = registry->CreateEntity();
+		
+		/** Tag */
+		sol::optional<std::string> tag = entity["tag"];
+		if (tag != sol::nullopt)
+		{
+			newEntity.Tag(entity["tag"]);
+		}
+
+		/** Group  */
+		sol::optional<std::string> group = entity["group"];
+		if (group != sol::nullopt)
+		{
+			newEntity.Group(entity["group"]);
+		}
+
+		/** Components */
+		sol::optional<sol::table> hasComponent = entity["components"];
+		if (hasComponent != sol::nullopt)
+		{
+			/** Transform  */
+			sol::optional<sol::table> transform = entity["commponent"]["transform"];
+			if (transform != sol::nullopt)
+			{
+				newEntity.AddComponent<TransformComponent>
+				(
+					glm::vec2
+					(
+						entity["components"]["transform"]["position"]["x"],
+						entity["components"]["transform"]["position"]["y"]
+					),
+					glm::vec2
+					(
+						entity["components"]["transform"]["scale"]["x"],
+						entity["components"]["transform"]["scale"]["y"]
+					),
+					entity["components"]["transform"]["rotation"].get_or(0.0)
+				);
+			}
+
+			/** RigidBody  */
+			
+		}
+
 		
 
 	}
