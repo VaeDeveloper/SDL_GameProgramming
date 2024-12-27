@@ -21,7 +21,6 @@ AssetManager::AssetManager()
 AssetManager::~AssetManager()
 {
     ClearAssets();
-    
     Logger::Log("Asset Manager destructor called");
 }
 

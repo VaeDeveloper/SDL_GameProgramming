@@ -4,7 +4,8 @@ Level =
     ----------------------------------------------------
     -- Table to define the list of assets
     ----------------------------------------------------
-    assets = {
+    assets = 
+    {
         [0] =
         { type = "texture", id = "tilemap-texture", file = "./assets/tilemaps/jungle.png" },
         { type = "texture", id = "chopper-texture", file = "./assets/images/chopper-green-spritesheet.png" },
@@ -30,7 +31,8 @@ Level =
     ----------------------------------------------------
     -- table to define entities and their components
     ----------------------------------------------------
-    entities = {
+    entities = 
+    {
         [0] =
         {
             -- Player
@@ -68,7 +70,8 @@ Level =
                     height = 25,
                     offset = { x = 0, y = 5 }
                 },
-                health = {
+                health = 
+                {
                     health_percentage = 100
                 },
                 projectile_emitter = 

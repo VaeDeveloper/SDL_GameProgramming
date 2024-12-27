@@ -5,6 +5,7 @@
 #include "../ECS/ECS.h"
 #include "../AssetManager/AssetManager.h"
 #include "../EventBus/EventBus.h"
+#include <sol/sol.hpp>
 
 
 const int FPS = 60;
@@ -20,6 +21,8 @@ class Game
 	SDL_Window* window = nullptr;
 	SDL_Renderer* renderer = nullptr;
 	SDL_Rect camera;
+
+	sol::state lua;
 
 	std::unique_ptr<Registry> registry = nullptr;
 	std::unique_ptr<AssetManager> assetManager = nullptr;
@@ -38,12 +41,15 @@ public:
 	void Update();
 	void Render();
 	void Destroy();
-	
-	static bool isEditMode;
-	static int WindowWidth;
-	static int WindowHeight;
+
 	static int MapWidth;
 	static int MapHeight;
+	static int WindowHeight;
+	static int WindowWidth;
+private:
+	void InitializeSystems();
+	
+	static bool isEditMode;
 
 };
 
