@@ -133,8 +133,8 @@ void Game::Setup()
 	InitializeSystems();
 
 	LevelLoader loader;
-	lua.open_libraries(sol::lib::base, sol::lib::math);
-	loader.LoadLevel(lua, renderer, registry, assetManager, 1);
+	lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
+	loader.LoadLevel(lua,registry,assetManager,renderer,1);
 }
 
 /**

@@ -108,7 +108,8 @@ public:
     /**
      * 
      */
-    void SetName(const std::string name) { Name = name;}
+    void SetName(const std::string name) { Name = name; }
+
     
     /**
      * Kill entity function 
@@ -239,6 +240,7 @@ public:
     Pool(int capacity = 100)
     {
         size = 0;
+
         data.resize(capacity);
     }
 
@@ -508,7 +510,8 @@ public:
      * @tparam TSystem The type of the system to add.
      * @tparam TArgs Parameter pack for forwarding arguments to the system's constructor.
      * @param args Arguments to initialize the system.
-     */    template<typename TSystem, typename ...TArgs>
+     */    
+    template<typename TSystem, typename ...TArgs>
     void AddSystem(TArgs&& ...args);
 
     /**
@@ -563,7 +566,7 @@ public:
 template <typename TComponent>
 inline void System::RequireComponent()
 {
-    const auto componentID = Component<TComponent>::GetID();
+    const auto componentID = Component<TComponent>::GetID();    
     componentSignature.set(componentID);
 }
 

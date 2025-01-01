@@ -13,7 +13,10 @@
 
 
 
-
+/**
+ * Render GUI system 
+ * add new entity in game  
+ */
 class RenderGUISystem : public System
 {
     bool* open = NULL;
@@ -34,7 +37,6 @@ public:
         }
         ImGui::EndMainMenuBar();    
 
-
         ImGui::SetNextWindowSize(ImVec2(500, 600));
         if (ImGui::Begin("Spawn Enemies"))
         {
@@ -53,7 +55,15 @@ public:
             static int projRepeat = 10;
             static int projDuration = 10;
             static int damage = 10;
-            const char* sprites [] = { "tank-image", "truck-image" };
+            const char* sprites [] = 
+            {
+                 "tank-texture", 
+                 "truck-texture", 
+                 "su27-texture", 
+                 "f22-texture", 
+                 "fw190-texture",  
+                 };
+                 
             static int selectedSpriteIndex = 0;
 
             if (ImGui::CollapsingHeader("Sprite Settings ", ImGuiTreeNodeFlags_DefaultOpen))
@@ -94,6 +104,7 @@ public:
             {
                 ImGui::InputInt("Enemy Health Value", &health, 1, 1000);
             }
+            
             ImGui::Spacing();
             ImGui::Separator();
             ImGui::Spacing();
