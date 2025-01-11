@@ -1,5 +1,5 @@
 build:
-	gcc -Wall -std=c99 ./src/*.c -lSDL2 -lm -o Renderer
+	gcc -Wall -Wfatal-errors -Wextra -pedantic -std=c99 ./src/*.c -lSDL2 -lm -o Renderer
 
 run:
 	./Renderer
