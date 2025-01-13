@@ -7,7 +7,7 @@
 #define     ARRAY_OCCUPIED(array) (ARRAY_RAW_DATA(array)[1])
 
 /**
- * 
+ * Holding dynamic array 
  */
 void* array_hold(void* array, int count, int item_size) {
     if (array == NULL) {
@@ -33,14 +33,14 @@ void* array_hold(void* array, int count, int item_size) {
 }
 
 /**
- * 
+ * size length dynamic array 
  */
 int array_length(void* array) {
     return (array != NULL) ? ARRAY_OCCUPIED(array) : 0;
 }
 
 /**
- * 
+ * free array 
  */
 void array_free(void* array) {
     if (array != NULL) {

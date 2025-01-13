@@ -1,7 +1,7 @@
 #include "triangle.h"
 #include "display.h"
 
-#define BRESENHAM_ALGO 1
+#define BRESENHAM_ALGO 0
 
 
 /** integer point swaping */
