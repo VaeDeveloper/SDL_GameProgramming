@@ -1,7 +1,7 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "Graphics.h"
+#include "../Physics/Graphics/Graphics.h"
 #include "../Physics/World.h"
 #include <vector>
 

@@ -70,10 +70,13 @@ void Application::Setup() {
 ///////////////////////////////////////////////////////////////////////////////
 // Input processing
 ///////////////////////////////////////////////////////////////////////////////
-void Application::Input() {
+void Application::Input() 
+{
     SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
+    while (SDL_PollEvent(&event)) 
+    {
+        switch (event.type) 
+        {
             case SDL_QUIT:
                 running = false;
                 break;
@@ -84,7 +87,8 @@ void Application::Input() {
                     debug = !debug;
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                if (event.button.button == SDL_BUTTON_LEFT) {
+                if (event.button.button == SDL_BUTTON_LEFT) 
+                {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
                     Body* ball = new Body(CircleShape(30), x, y, 1.0);
@@ -92,7 +96,8 @@ void Application::Input() {
                     ball->restitution = 0.7;
                     world->AddBody(ball);
                 }
-                if (event.button.button == SDL_BUTTON_RIGHT) {
+                if (event.button.button == SDL_BUTTON_RIGHT) 
+                {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
                     Body* box = new Body(BoxShape(60, 60), x, y, 1.0);
@@ -101,6 +106,7 @@ void Application::Input() {
                     world->AddBody(box);
                 }
                 break;
+                
             case SDL_MOUSEMOTION:
                 int x, y;
                 SDL_GetMouseState(&x, &y);
@@ -117,7 +123,8 @@ void Application::Input() {
 ///////////////////////////////////////////////////////////////////////////////
 // Update function (called several times per second to update objects)
 ///////////////////////////////////////////////////////////////////////////////
-void Application::Update() {
+void Application::Update() 
+{
     Graphics::ClearScreen(0xFF0F0721);
     
     // Wait some time until the reach the target frame time in milliseconds
@@ -148,8 +155,10 @@ void Application::Render() {
     Graphics::DrawLine(bob->position.x, bob->position.y, head->position.x, head->position.y, 0xFF555555);
 
     // Draw all joints anchor points
-    for (auto joint: world->GetConstraints()) {
-        if (debug) {
+    for (auto joint: world->GetConstraints()) 
+    {
+        if (debug) 
+        {
             const Vector2D anchorPoint = joint->a->LocalSpaceToWorldSpace(joint->aPoint);
             Graphics::DrawFillCircle(anchorPoint.x, anchorPoint.y, 3, 0xFF0000FF);
         }
@@ -157,27 +166,39 @@ void Application::Render() {
 
     // Draw all bodies
     for (auto body: world->GetBodies()) {
-        if (body->shape->GetType() == CIRCLE) {
+        if (body->shape->GetType() == CIRCLE) 
+        {
             CircleShape* circleShape = (CircleShape*) body->shape;
-            if (!debug && body->texture) {
+            if (!debug && body->texture) 
+            {
                 Graphics::DrawTexture(body->position.x, body->position.y, circleShape->radius * 2, circleShape->radius * 2, body->rotation, body->texture);
-            } else {
+            } 
+            else 
+            {
                 Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation, 0xFF00FF00);
             }
         }
-        if (body->shape->GetType() == BOX) {
-            BoxShape* boxShape = (BoxShape*) body->shape;
-            if (!debug && body->texture) {
+        if (body->shape->GetType() == BOX) 
+        {
+            BoxShape* boxShape = static_cast<BoxShape*>(body->shape);
+            if (!debug && body->texture) 
+            {
                 Graphics::DrawTexture(body->position.x, body->position.y, boxShape->width, boxShape->height, body->rotation, body->texture);
-            } else {
+            } 
+            else 
+            {
                 Graphics::DrawPolygon(body->position.x, body->position.y, boxShape->worldVertices, 0xFF00FF00);
             }
         }
-        if (body->shape->GetType() == POLYGON) {
-            PolygonShape* polygonShape = (PolygonShape*) body->shape;
-            if (!debug) {
+        if (body->shape->GetType() == POLYGON) 
+        {
+            PolygonShape* polygonShape = static_cast<PolygonShape*>(body->shape);
+            if (!debug) 
+            {
                 Graphics::DrawFillPolygon(body->position.x, body->position.y, polygonShape->worldVertices, 0xFF444444);
-            } else {
+            } 
+            else 
+            {
                 Graphics::DrawPolygon(body->position.x, body->position.y, polygonShape->worldVertices, 0xFF00FF00);
             }
         }
@@ -188,7 +209,8 @@ void Application::Render() {
 ///////////////////////////////////////////////////////////////////////////////
 // Destroy function to delete objects and close the window
 ///////////////////////////////////////////////////////////////////////////////
-void Application::Destroy() {
+void Application::Destroy() 
+{
     delete world;
     Graphics::CloseWindow();
 }
