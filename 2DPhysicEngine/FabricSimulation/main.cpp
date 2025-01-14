@@ -6,7 +6,7 @@ int main(int argc, char* args[])
 {
     Application app;
 
-    app.Setup(1000, 350, 10);
+    app.Setup(600, 250, 20);
 
     app.Setup();
     while (app.IsRunning())

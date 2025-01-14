@@ -2,18 +2,21 @@
 
 #include "ClothApplication.h"
 #include "../Physics/Constants.h"
+#include "../Physics/Logger/Logger.h"
 #include "iostream"
 
 
-bool Application::IsRunning()
+inline bool Application::IsRunning()
 {
     return running;
 }
+
 /* Setup function(executed once in the beginning of the simulation)*/
-void Application::Setup()
+inline void Application::Setup()
 {
-    std::cout << "Application Initialization \n";
+    Logger::Log("Application initialization");
 }
+
 void Application::Setup(int clothWidth, int clothHeight, int clothSpacing)
 {
     graphic = new Graphics();
@@ -39,7 +42,9 @@ void Application::Input()
     {
         switch (event.type)
         {
-            case SDL_QUIT: running = false; break;
+            case SDL_QUIT: 
+                running = false; 
+                break;
 
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_ESCAPE)    running = false;
@@ -106,6 +111,7 @@ void Application::Input()
         }
     }
 }
+
 /*  Update function(called several times per second to update objects) */
 void Application::Update()
 {
@@ -116,10 +122,11 @@ void Application::Update()
 
     lastUpdateTime = currentTime;
 }
+
 /*  Render function (called several times per second to draw objects) */
 void Application::Render()
 {
-    Graphics::ClearScreen(0xFF00000000);
+    Graphics::ClearScreen(static_cast<Uint32>(0xFF00000000));
 
     cloth->Draw(graphic);
 

@@ -2,7 +2,7 @@
 #define CLOTHAPPLICATION_H
 
 
-#include "./Graphics.h"
+#include "../Physics/Graphics/Graphics.h"
 #include <vector>
 #include "../Physics/Objects/Cloth.h"
 #include "../Physics/Mouse.h"
