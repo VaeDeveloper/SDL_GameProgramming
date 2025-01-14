@@ -32,9 +32,9 @@ public:
 class JointConstraint : public Constraint
 {
 private:
-    MatMN jacobian;
-    VectorN cachedLambda;
-    float bias;
+    MatMN       jacobian;
+    VectorN     cachedLambda;
+    float       bias;
 
 public:
     JointConstraint();
@@ -47,11 +47,11 @@ public:
 class PenetrationConstraint : public Constraint
 {
 private:
-    MatMN jacobian;
-    VectorN cachedLambda;
-    float bias;
-    Vector2D normal;            // Normal direction of the penetration in A's local space
-    float friction;             // Friction coefficient between the two penetrating bodies
+    MatMN       jacobian;
+    VectorN     cachedLambda;
+    float       bias;
+    Vector2D    normal;            // Normal direction of the penetration in A's local space
+    float       friction;             // Friction coefficient between the two penetrating bodies
 
 public:
     PenetrationConstraint();

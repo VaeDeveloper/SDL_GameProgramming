@@ -4,7 +4,6 @@
 
 Cloth::Cloth(int width, int height, int spacing, int startX, int startY)
 {
-    //
     for (int y = PhysicEngine::ZERO; y <= height; y++)
     {
         for (int x = PhysicEngine::ZERO; x <= width; x++)
@@ -41,26 +40,19 @@ Cloth::Cloth(int width, int height, int spacing, int startX, int startY)
 
 Cloth::~Cloth()
 {
-    for (auto point : points)
-    {
-        delete point;
-    }
-
-    for (auto stick : sticks)
-    {
-        delete stick;
-    }
+    for (auto point : points) delete point;
+    for (auto stick : sticks) delete stick;
 }
 
 void Cloth::Update(Graphics* renderer, Mouse* mouse, float deltaTime)
 {
-    for (int i = PhysicEngine::ZERO; i < points.size(); i++)
+    for (int i = PhysicEngine::ZERO; i < static_cast<int>(points.size()); i++)
     {
         Point* p = points[i];
         p->Update(deltaTime, drag, gravity, elasticity, mouse, renderer->Width(), renderer->Height());
     };
 
-    for (int i = PhysicEngine::ZERO; i < sticks.size(); i++)
+    for (int i = PhysicEngine::ZERO; i < static_cast<int>(sticks.size()); i++)
     {
         sticks[i]->Update();
     };
@@ -68,7 +60,7 @@ void Cloth::Update(Graphics* renderer, Mouse* mouse, float deltaTime)
 
 void Cloth::Draw(Graphics* renderer) const
 {
-    for (int i = PhysicEngine::ZERO; i < sticks.size(); i++)
+    for (int i = PhysicEngine::ZERO; i < static_cast<int>(sticks.size()); i++)
     {
         sticks[i]->Draw(renderer);
     }

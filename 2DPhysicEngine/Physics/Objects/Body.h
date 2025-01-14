@@ -1,5 +1,5 @@
-#pragma once 
-#define Body_H
+#pragma once
+
 
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
@@ -66,3 +66,5 @@ struct Body
     void IntegrateForces(const float dt);
     void IntegrateVelocities(const float dt);
 };
+
+

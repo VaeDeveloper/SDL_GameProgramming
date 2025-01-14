@@ -1,5 +1,5 @@
 #include "Point.h"
-
+#include "./Objects/Stick.h"
 
 Point::Point(float x, float y)
 {

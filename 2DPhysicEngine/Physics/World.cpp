@@ -1,14 +1,15 @@
 #include "World.h"
 #include "Constants.h"
 #include "CollisionDetection.h"
-#include "../AngryApp/Application.h"
+#include "./Graphics/Graphics.h"
 #include <iostream>
+#include "./Logger/Logger.h"
 
 
 World::World(float gravity)
 {
     G = -gravity;
-    std::cout << "World constructor called!" << std::endl;
+    Logger::Log("World constructor called");
 }
 
 World::~World()
@@ -21,7 +22,8 @@ World::~World()
     {
         delete constraint;
     }
-    std::cout << "World destructor called!" << std::endl;
+
+    Logger::Log("World destructor called");
 }
 
 void World::AddBody(Body* body)
@@ -82,9 +84,9 @@ void World::Update(float dt)
     }
 
     // Check all the bodies with all other bodies detecting collisions
-    for (int i = 0; i <= bodies.size() - PhysicEngine::POSITIVE; i++)
+    for (int i = 0; i <= static_cast<int>(bodies.size() - PhysicEngine::POSITIVE); i++)
     {
-        for (int j = i + PhysicEngine::POSITIVE; j < bodies.size(); j++)
+        for (int j = i + PhysicEngine::POSITIVE; j < static_cast<int>(bodies.size()); j++)
         {
             Body* a = bodies[i];
             Body* b = bodies[j];

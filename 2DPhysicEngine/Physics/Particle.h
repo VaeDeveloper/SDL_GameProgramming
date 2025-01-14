@@ -3,25 +3,23 @@
 
 #include "Vector2D.h"
 
-struct Particle {
-    int radius;
-
-    Vector2D position;
-    Vector2D velocity;
-    Vector2D acceleration;
-
-    Vector2D sumForces;
-
-    float mass;
-    float invMass;
-
+struct Particle 
+{
     Particle(float x, float y, float mass);
     ~Particle();
 
-    void AddForce(const Vector2D& force);
-    void ClearForces();
+    int         radius;
+    float       mass;
+    float       invMass;
 
-    void Integrate(float dt);
+    Vector2D    position;
+    Vector2D    velocity;
+    Vector2D    acceleration;
+    Vector2D    sumForces;
+
+    void        AddForce(const Vector2D& force);
+    void        ClearForces();
+    void        Integrate(float dt);
 };
 
 #endif

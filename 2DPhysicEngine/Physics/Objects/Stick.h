@@ -1,13 +1,12 @@
 #pragma once
 
-#include "../../AngryApp/Graphics.h"
+#include "../Graphics/Graphics.h"
 
-/*---------------------------------------------------------------------------*/
 class Point;
-/*---------------------------------------------------------------------------*/
 class Stick
 {
 public:
+    Stick(Point& p0, Point& p1, float lenght, Uint32 color, Uint32 selectedColor);
     Stick(Point& p0, Point& p1, float lenght);
     ~Stick() = default;
 
@@ -29,4 +28,3 @@ private:
     Uint32 color = 0xFF00FF00;
     Uint32 colorWhenSelected = 0xFFFF0000;
 };
-/*---------------------------------------------------------------------------*/

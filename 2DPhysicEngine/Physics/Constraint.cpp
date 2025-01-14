@@ -129,14 +129,14 @@ void JointConstraint::Solve()
     const MatMN Jt = jacobian.Transpose();
 
     // Compute lambda using Ax=b (Gauss-Seidel method)
-    MatMN lhs = J * invM * Jt;  // A
+    const MatMN lhs = J * invM * Jt;  // A
     VectorN rhs = J * V * -1.0f;   // b
     rhs[0] -= bias;
-    VectorN lambda = MatMN::SolveGaussSeidel(lhs, rhs);
+    const VectorN lambda = MatMN::SolveGaussSeidel(lhs, rhs);
     cachedLambda += lambda;
 
     // Compute the impulses with both direction and magnitude
-    VectorN impulses = Jt * lambda;
+    const VectorN impulses = Jt * lambda;
 
     // Apply the impulses to both bodies
     a->ApplyImpulseLinear(Vector2D(impulses[0], impulses[1]));  // A linear impulse

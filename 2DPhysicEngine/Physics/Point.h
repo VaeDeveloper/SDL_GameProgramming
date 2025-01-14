@@ -1,10 +1,11 @@
 #pragma once
 
-#include "../AngryApp/Graphics.h"
-#include "Vector2D.h"
-#include "./Objects/Stick.h"
-#include "Mouse.h"
 
+#include "Vector2D.h"
+#include "Mouse.h"
+#include "./Graphics/Graphics.h"
+
+class Stick;
 /**
  *
  */

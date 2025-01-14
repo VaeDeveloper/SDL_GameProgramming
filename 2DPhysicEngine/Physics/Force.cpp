@@ -77,14 +77,15 @@ Vector2D Force::GenerateGravitationalForce(const Body& a, const Body& b, float G
     /* distanceSquared = std::clamp(distanceSquared, minDistance, maxDistance); use std library or Math library */
     distanceSquared = Math::Clamp(distanceSquared, minDistance, maxDistance);
 
-    /*Calculate the direction of the attraction force*/
+    /* Calculate the direction of the attraction force*/
     Vector2D attractionDirection = d.UnitVector();
 
-    /*Calculate the strength of the attraction force */
+    /* Calculate the strength of the attraction force */
     const float attractionMagnitude = G * (a.mass * b.mass) / distanceSquared;
 
     /* Calculate the final resulting attraction force vector*/
     const Vector2D attractionForce = attractionDirection * attractionMagnitude;
+
     return attractionForce; 
 }
 
@@ -127,10 +128,12 @@ Vector2D Force::GenerateSpringForce(const Body& a, const Body& b, float restLeng
 
     /* Calculate the final resulting spring force vector*/
     const Vector2D springForce = springDirection * springMagnutude;
+
     return springForce;
 }
 
-Vector2D Force::GenerateSpringForce(const Particle& particle, Vector2D anchor, float restLength, float k) {
+Vector2D Force::GenerateSpringForce(const Particle& particle, Vector2D anchor, float restLength, float k) 
+{
     // Calculate the distance between the anchor and the object
     Vector2D d = particle.position - anchor;
 
@@ -145,10 +148,12 @@ Vector2D Force::GenerateSpringForce(const Particle& particle, Vector2D anchor, f
 
     // Calculate the final resulting spring force vector
     Vector2D springForce = springDirection * springMagnitude;
+
     return springForce;
 }
 
-Vector2D Force::GenerateSpringForce(const Particle& a, const Particle& b, float restLength, float k) {
+Vector2D Force::GenerateSpringForce(const Particle& a, const Particle& b, float restLength, float k) 
+{
     // Calculate the distance between the two particles
     Vector2D d = a.position - b.position;
 
@@ -163,5 +168,6 @@ Vector2D Force::GenerateSpringForce(const Particle& a, const Particle& b, float 
 
     // Calculate the final resulting spring force vector
     Vector2D springForce = springDirection * springMagnitude;
+
     return springForce;
 }

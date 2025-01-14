@@ -118,10 +118,10 @@ bool CollisionDetection::IsCollidingPolygonPolygon(Body* a, Body* b, std::vector
     const Vector2D v0 = incidentShape->worldVertices[incidentIndex];
     const Vector2D v1 = incidentShape->worldVertices[incidentNextIndex];
 
-    std::vector<Vector2D> contactPoints = {v0, v1};
+    std::vector<Vector2D> contactPoints = { v0, v1 };
     std::vector<Vector2D> clippedPoints = contactPoints;
     
-    for (int i = 0; i < referenceShape->worldVertices.size(); i++)
+    for (int i = 0; i < static_cast<int>(referenceShape->worldVertices.size()); i++)
     {
         if (i == indexReferenceEdge) continue;
 
@@ -154,7 +154,7 @@ bool CollisionDetection::IsCollidingPolygonPolygon(Body* a, Body* b, std::vector
             contact.start = vclip;
             contact.end = vclip + contact.normal * -separation;
             
-	    if (baSeparation >= abSeparation)
+	        if (baSeparation >= abSeparation)
             {
                 std::swap(contact.start, contact.end);  // the start-end points are always from "a" to "b"
                 contact.normal *= -1.0;                 // the collision normal is always from "a" to "b"
@@ -186,7 +186,7 @@ bool CollisionDetection::IsCollidingPolygonCircle(Body* polygon, Body* circle, s
     float distanceCircleEdge = std::numeric_limits<float>::lowest();
 
     // Loop all the edges of the polygon/box finding the nearest edge to the circle center
-    for (int i = 0; i < polygonVertices.size(); i++)
+    for (int i = 0; i < static_cast<int>(polygonVertices.size()); i++)
     {
         int currVertex = i;
         int nextVertex = (i + 1) % polygonVertices.size();

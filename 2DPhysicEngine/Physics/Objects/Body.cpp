@@ -3,8 +3,9 @@
 #include <iostream>
 
 #include "../Constants.h"
+#include "../Logger/Logger.h"
+#include "../Graphics/Graphics.h"
 
-#include "../../AngryApp/Graphics.h"
 
 namespace BodyConstants
 {
@@ -13,7 +14,6 @@ namespace BodyConstants
     const float Epsilon = 0.005f;
 };  // namespace BodyConstants
 
-/*----------------------------------------------------------------------------------------------------------------*/
 Body::Body(const Shape& shape, float x, float y, float mass)
 {
     this->shape = shape.Clone();
@@ -48,58 +48,59 @@ Body::Body(const Shape& shape, float x, float y, float mass)
     }
     this->shape->UpdateVertices(rotation, position);
     
-    std::cout << "Body constructor called!" << std::endl;
+    Logger::Log("Body constructor called");
 }
-/*----------------------------------------------------------------------------------------------------------------*/
+
 Body::~Body()
 {
     delete shape;
     SDL_DestroyTexture(texture);
-    std::cout << "Body destructor called!" << std::endl;
+    Logger::Log("Body destructor called");
 }
-/*----------------------------------------------------------------------------------------------------------------*/
+
 void Body::SetTexture(const char* textureFileName)
 {
     SDL_Surface* surface = IMG_Load(textureFileName);
     if (surface)
     {
+        Logger::Warning("Surface dont load, create new");
         texture = SDL_CreateTextureFromSurface(Graphics::Renderer, surface);
         SDL_FreeSurface(surface);
     }
 }
-/*----------------------------------------------------------------------------------------------------------------*/
+
 bool Body::IsStatic() const
 {
     const float epsilon = BodyConstants::Epsilon;
     return fabs(invMass - PhysicEngine::ZERO_FLOAT) < epsilon;
 }
-/*----------------------------------------------------------------------------------------------------------------*/
+
 void Body::AddForce(const Vector2D& force)
 {
     sumForces += force;
 }
-/*----------------------------------------------------------------------------------------------------------------*/
+
 void Body::AddTorque(float torque)
 {
     sumTorque += torque;
 }
-/*----------------------------------------------------------------------------------------------------------------*/
+
 void Body::ClearForces()
 {
     sumForces = Vector2D::Zero;
 }
-/*----------------------------------------------------------------------------------------------------------------*/
+
 void Body::ClearTorque()
 {
     sumTorque = PhysicEngine::ZERO_FLOAT;
 }
-/*----------------------------------------------------------------------------------------------------------------*/
+
 Vector2D Body::LocalSpaceToWorldSpace(const Vector2D& point) const
 {
     Vector2D rotated = point.Rotate(rotation);
     return rotated + position;
 }
-/*----------------------------------------------------------------------------------------------------------------*/
+
 Vector2D Body::WorldSpaceToLocalSpace(const Vector2D& point) const
 {
     float translatedX = point.x - position.x;
@@ -108,26 +109,26 @@ Vector2D Body::WorldSpaceToLocalSpace(const Vector2D& point) const
     float rotatedY = cos(-rotation) * translatedY + sin(-rotation) * translatedX;
     return Vector2D(rotatedX, rotatedY);
 }
-/*----------------------------------------------------------------------------------------------------------------*/
+
 void Body::ApplyImpulseLinear(const Vector2D& j)
 {
     if (IsStatic()) return;
     velocity += j * invMass;
 }
-/*----------------------------------------------------------------------------------------------------------------*/
+
 void Body::ApplyImpulseAngular(const float j)
 {
     if (IsStatic()) return;
     angularVelocity += j * invI;
 }
-/*----------------------------------------------------------------------------------------------------------------*/
+
 void Body::ApplyImpulseAtPoint(const Vector2D& j, const Vector2D& r)
 {
     if (IsStatic()) return;
     velocity += j * invMass;
     angularVelocity += r.CrossProduct(j) * invI;
 }
-/*----------------------------------------------------------------------------------------------------------------*/
+
 void Body::IntegrateForces(const float dt)
 {
     if (IsStatic()) return;
@@ -148,7 +149,7 @@ void Body::IntegrateForces(const float dt)
     ClearForces();
     ClearTorque();
 }
-/*----------------------------------------------------------------------------------------------------------------*/
+
 void Body::IntegrateVelocities(const float dt)
 {
     if (IsStatic()) return;
@@ -162,4 +163,3 @@ void Body::IntegrateVelocities(const float dt)
     // Update the vertices to adjust them to the new position/rotation
     shape->UpdateVertices(rotation, position);
 }
-/*----------------------------------------------------------------------------------------------------------------*/

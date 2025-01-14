@@ -3,6 +3,7 @@
 #include <limits>
 #include "../Constants.h"
 #include "../Math.h"
+#include "../Logger/Logger.h"
 
 namespace ShapeConstants
 {
@@ -14,12 +15,12 @@ constexpr double MultipliedRigidbody = 0.083333;
 CircleShape::CircleShape(float radius)
 {
     this->radius = radius;
-    std::cout << "CircleShape constructor called!" << std::endl;
+    Logger::Log("CircleShape constructor called (radius " +  std::to_string(radius) + " ).");
 }
 
 CircleShape::~CircleShape()
 {
-    std::cout << "CircleShape destructor called!" << std::endl;
+    Logger::Log("CircleShape destructor called");
 }
 
 Shape* CircleShape::Clone() const
@@ -44,7 +45,7 @@ float CircleShape::GetMomentOfInertia() const
     return ShapeConstants::MomentInertiaDot * (radius * radius);
 }
 
-PolygonShape::PolygonShape(const std::vector<Vector2D> vertices)
+PolygonShape::PolygonShape(const TVector2D vertices)
 {
     float minX = std::numeric_limits<float>::max();
     float minY = std::numeric_limits<float>::max();
@@ -66,12 +67,12 @@ PolygonShape::PolygonShape(const std::vector<Vector2D> vertices)
     width = maxX - minX;
     height = maxY - minY;
 
-    std::cout << "PolygonShape constructor called!" << std::endl;
+    Logger::Log("PolygonShape constructor called");
 }
 
 PolygonShape::~PolygonShape()
 {
-    std::cout << "PolygonShape destructor called!" << std::endl;
+    Logger::Log("PolygonShape destructor called");
 }
 
 ShapeType PolygonShape::GetType() const
@@ -88,7 +89,7 @@ float PolygonShape::PolygonArea() const
 {
     float area = PhysicEngine::ZERO_FLOAT;
 
-    for (int i = PhysicEngine::ZERO; i < localVertices.size(); i++)
+    for (int i = PhysicEngine::ZERO; i < static_cast<int>(localVertices.size()); i++)
     {
         int j = (i + PhysicEngine::POSITIVE) % localVertices.size();
         area += localVertices[i].CrossProduct(localVertices[j]);
@@ -100,7 +101,7 @@ Vector2D PolygonShape::PolygonCentroid() const
 {
     Vector2D cg = Vector2D::Zero;
 
-    for (int i = PhysicEngine::ZERO; i < localVertices.size(); i++)
+    for (int i = PhysicEngine::ZERO; i < static_cast<int>(localVertices.size()); i++)
     {
         int j = (i + PhysicEngine::POSITIVE) % localVertices.size();
         cg += (localVertices[i] + localVertices[j]) * localVertices[i].CrossProduct(localVertices[j]);
@@ -113,7 +114,7 @@ float PolygonShape::GetMomentOfInertia() const
     float acc0 = PhysicEngine::ZERO;
     float acc1 = PhysicEngine::ZERO;
 
-    for (unsigned int i = PhysicEngine::ZERO; i < localVertices.size(); i++)
+    for (unsigned int i = PhysicEngine::ZERO; i < static_cast<unsigned int>(localVertices.size()); i++)
     {
         const auto a = localVertices[i];
         const auto b = localVertices[(i + PhysicEngine::POSITIVE) % localVertices.size()];
@@ -138,7 +139,7 @@ float PolygonShape::FindMinSeparation(const PolygonShape* other, int& indexRefer
     float separation = std::numeric_limits<float>::lowest();
     
     // Loop all the vertices of "this" polygon
-    for (int i = PhysicEngine::ZERO; i < this->worldVertices.size(); i++)
+    for (int i = PhysicEngine::ZERO; i < static_cast<int>(this->worldVertices.size()); i++)
     {
         const Vector2D va = this->worldVertices[i];
         const Vector2D normal = this->EdgeAt(i).Normal();
@@ -147,7 +148,7 @@ float PolygonShape::FindMinSeparation(const PolygonShape* other, int& indexRefer
         float minSep = std::numeric_limits<float>::max();
         Vector2D minVertex;
         
-        for (int j = 0; j < other->worldVertices.size(); j++)
+        for (int j = 0; j < static_cast<int>(other->worldVertices.size()); j++)
         {
             Vector2D vb = other->worldVertices[j];
             const float proj = (vb - va).DotProduct(normal);
@@ -175,7 +176,7 @@ int PolygonShape::FindIncidentEdge(const Vector2D& normal) const
 
     float minProj = std::numeric_limits<float>::max();
     
-    for (int i = PhysicEngine::ZERO; i < this->worldVertices.size(); ++i)
+    for (int i = PhysicEngine::ZERO; i < static_cast<int>(this->worldVertices.size()); ++i)
     {
         const auto edgeNormal = this->EdgeAt(i).Normal();
         const auto proj = edgeNormal.DotProduct(normal);
@@ -189,8 +190,7 @@ int PolygonShape::FindIncidentEdge(const Vector2D& normal) const
     return indexIncidentEdge;
 }
 
-int PolygonShape::ClipSegmentToLine(
-    const std::vector<Vector2D>& contactsIn, std::vector<Vector2D>& contactsOut, const Vector2D& c0, const Vector2D& c1) const
+int PolygonShape::ClipSegmentToLine(const TVector2D& contactsIn, TVector2D& contactsOut, const Vector2D& c0, const Vector2D& c1) const
 {
     // Start with no output points
     int numOut = PhysicEngine::ZERO;
@@ -221,7 +221,7 @@ int PolygonShape::ClipSegmentToLine(
 void PolygonShape::UpdateVertices(float angle, const Vector2D& position)
 {
     // Loop all the vertices, transforming from local to world space
-    for (int i = 0; i < localVertices.size(); i++)
+    for (int i = 0; i < static_cast<int>(localVertices.size()); i++)
     {
         // First rotate, then we translate
         worldVertices[i] = localVertices[i].Rotate(angle);
