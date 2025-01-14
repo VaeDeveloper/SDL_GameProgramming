@@ -21,12 +21,15 @@ void Application::Setup()
     Body* leftFence = new Body(BoxShape(50, Graphics::Height() - 200), 0, Graphics::Height() / 2.0 - 35, 0.0);
     Body* rightFence = new Body(BoxShape(50, Graphics::Height() - 200), Graphics::Width(), Graphics::Height() / 2.0 - 35, 0.0);
     Body* top = new Body(BoxShape(Graphics::Width() + 50, 50), Graphics::Width() / 2.0, Graphics::Height() / 2.0 - 500, 0.0);
+    floor->restitution = 0.7;
+    leftFence->restitution = 0.2;
+    rightFence->restitution = 0.2;
+    top->restitution = 0.2;
 
     world->AddBody(floor);
     world->AddBody(leftFence);
     world->AddBody(rightFence);
     world->AddBody(top);
-
 
     Particle* a = new Particle(100, 100, 1.0);
     Particle* b = new Particle(300, 100, 1.0);
@@ -189,7 +192,8 @@ void Application::Update() {
 void Application::Render() {
     Graphics::ClearScreen(0xFFFFFFFF);
 
-    if (leftMouseButtonDown) {
+    if (leftMouseButtonDown)
+    {
         int lastParticle = NUM_PARTICLES - 1;
         Graphics::DrawLine(particles[lastParticle]->position.x, particles[lastParticle]->position.y, mouseCursor.x, mouseCursor.y, 0xFF0000FF);
     }
@@ -209,7 +213,7 @@ void Application::Render() {
     Graphics::DrawFillCircle(particles[3]->position.x, particles[3]->position.y, particles[3]->radius, 0xFFEEBB00);
 
 
-        // Draw all bodies
+    // Draw all bodies
     for (const auto& body : world->GetBodies())
     {
         if (body->shape->GetType() == CIRCLE)
@@ -244,8 +248,7 @@ void Application::Render() {
             PolygonShape* polygonShape = (PolygonShape*)body->shape;
             if (!debug && body->texture)
             {
-                Graphics::DrawTexture(
-                    body->position.x, body->position.y, polygonShape->width, polygonShape->height, body->rotation, body->texture);
+                Graphics::DrawTexture(body->position.x, body->position.y, polygonShape->width, polygonShape->height, body->rotation, body->texture);
             }
             else if (debug)
             {
