@@ -1,7 +1,7 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "Graphics.h"
+#include "../Physics/Graphics/Graphics.h"
 #include <vector>
 #include "../Physics/World.h"
 #include "../Physics/Particle.h"
@@ -20,16 +20,16 @@ class Body;
 class Application
 {
 private:
-        bool running = false;
-        std::vector<Particle*> particles;
-        Vector2D pushForce = Vector2D(0, 0);
-        Vector2D mouseCursor = Vector2D(0, 0);
-        bool leftMouseButtonDown = false;
+    bool running = false;
+    std::vector<Particle*> particles;
+    Vector2D pushForce = Vector2D(0, 0);
+    Vector2D mouseCursor = Vector2D(0, 0);
+    bool leftMouseButtonDown = false;
 
-        Vector2D anchor;
-        float k = 300;
-        float restLength = 15;
-        const int NUM_PARTICLES = 15;
+    Vector2D anchor;
+    float k = 300;
+    float restLength = 15;
+    const int NUM_PARTICLES = 15;
         
 public:
     Application() = default;
