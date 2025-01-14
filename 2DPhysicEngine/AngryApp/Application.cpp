@@ -5,6 +5,8 @@
 #include "../Physics/Contact.h"
 #include "../Physics/Constraint.h"
 
+#include "../Physics/Graphics/Graphics.h"
+
 #define DEBUG_IFNO 0
 
 

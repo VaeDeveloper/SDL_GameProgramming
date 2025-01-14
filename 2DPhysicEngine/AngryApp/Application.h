@@ -1,8 +1,10 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "Graphics.h"
 #include <vector>
+
+
+#include "../Physics/Logger/Logger.h"
 #include "../Physics/World.h"
 
 class Body;
