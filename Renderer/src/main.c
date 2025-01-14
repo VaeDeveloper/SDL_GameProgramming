@@ -85,7 +85,7 @@ void setup_app(void){
 //    load_cube_mesh_data();
 
     /* loading mesh obj */
-    load_obj_file_data("./assets/f22.obj");
+    load_obj_file_data("./assets/crab.obj");
 }
 
 /**  input proccesing with sdl events */
@@ -155,10 +155,10 @@ void process_input(void){
 
 /** update scale rotation and translation mesh */
 void mesh_update(void){
-    // mesh.rotation.x        += rotation_offset_input;
-    // mesh.rotation.y        += rotation_offset_input + 0.02;
-    // mesh.rotation.z        += rotation_offset_input + 0.03;
-    // mesh.translation.x     -= 0.01;
+    mesh.rotation.x        += rotation_offset_input;
+    mesh.rotation.y        += rotation_offset_input + 0.02;
+    mesh.rotation.z        += rotation_offset_input + 0.03;
+     //mesh.translation.x     -= 0.01;
     mesh.translation.z     = 5;
 }
 
