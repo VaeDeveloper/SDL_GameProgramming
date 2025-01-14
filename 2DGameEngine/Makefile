@@ -5,13 +5,7 @@ COMPILER_FLAGS = -Wall -Wfatal-errors -Wextra -pedantic
 INCLUDE_PATH = -I"./libs/"
 
 # 
-SOURCE_FILES = ./src/*.cpp \
-               ./src/Game/*.cpp \
-               ./src/Logger/*.cpp \
-               ./src/ECS/*.cpp \
-               ./src/AssetManager/*.cpp \
-			   ./src/FileManager/*.cpp \
-			   ./libs/imgui/*.cpp
+SOURCE_FILES = ./src/*.cpp ./src/Game/*.cpp ./src/Logger/*.cpp ./src/ECS/*.cpp ./src/AssetManager/*.cpp ./src/FileManager/*.cpp ./libs/imgui/*.cpp
 
 LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -llua5.4
 
